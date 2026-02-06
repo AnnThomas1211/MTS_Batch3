@@ -1,5 +1,8 @@
 package com.fidelity.mts.service;
 
-public class TransferService {
+import com.fidelity.mts.application.dto.TransferRequest;
+import com.fidelity.mts.application.dto.TransferResponse;
 
+public interface TransferService {
+    TransferResponse transfer(TransferRequest request);
 }

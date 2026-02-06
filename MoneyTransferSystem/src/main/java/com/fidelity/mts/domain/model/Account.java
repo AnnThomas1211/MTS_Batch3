@@ -3,7 +3,7 @@ import java.sql.Timestamp;
 
 import com.fidelity.mts.domain.enums.Enums.AccountStatus;
 public class Account {
-	private int id;
+	private long id;
 	private String holderName;
 	private long balance;
 	private AccountStatus status;
@@ -18,10 +18,10 @@ public class Account {
 		this.version = version;
 		this.lastUpdated = lastUpdated;
 	}
-	public int getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getHolderName() {

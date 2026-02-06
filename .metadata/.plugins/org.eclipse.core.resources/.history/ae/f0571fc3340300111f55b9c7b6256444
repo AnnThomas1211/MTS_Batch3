@@ -1,0 +1,5 @@
+package com.fidelity.mts.repo;
+
+public class TransactionLogRepository {
+
+}

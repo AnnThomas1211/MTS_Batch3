@@ -1,19 +1,21 @@
 package com.fidelity.mts.domain.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 import com.fidelity.mts.domain.enums.Enums.TransactionStatus;
 
 public class TransactionLog {
-	private long id;
+	private UUID id;
 	private long fromAccountId;
 	private long toAccountId;
-	private long amount;
+	private BigDecimal amount;
 	private TransactionStatus status;
 	private String failureReason;
 	private String idempotencyKey;
 	private Timestamp createdOn;
-	public TransactionLog(long id, long fromAccountId, long toAccountId, long amount, TransactionStatus status,
+	public TransactionLog(UUID id, long fromAccountId, long toAccountId, BigDecimal amount, TransactionStatus status,
 			String failureReason, String idempotencyKey, Timestamp createdOn) {
 		super();
 		this.id = id;
@@ -25,10 +27,10 @@ public class TransactionLog {
 		this.idempotencyKey = idempotencyKey;
 		this.createdOn = createdOn;
 	}
-	public long getId() {
+	public UUID getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 	public long getFromAccountId() {
@@ -43,10 +45,10 @@ public class TransactionLog {
 	public void setToAccountId(long toAccountId) {
 		this.toAccountId = toAccountId;
 	}
-	public long getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
-	public void setAmount(long amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 	public TransactionStatus getStatus() {
