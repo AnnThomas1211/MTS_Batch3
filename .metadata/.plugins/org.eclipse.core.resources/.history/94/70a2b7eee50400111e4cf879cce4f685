@@ -1,0 +1,49 @@
+package com.fidelity.mts.service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fidelity.mts.application.dto.AccountResponse;
+import com.fidelity.mts.application.dto.TransferResponse;
+import com.fidelity.mts.domain.exception.AccountNotFoundException;
+import com.fidelity.mts.domain.model.Account;
+import com.fidelity.mts.domain.model.TransactionLog;
+import com.fidelity.mts.repo.AccountRepository;
+import com.fidelity.mts.repo.TransactionLogRepository;
+
+@Service
+public class AccountServiceImpl implements AccountService {
+
+	@Autowired
+	AccountRepository accountRepository;
+	
+	@Autowired
+	TransactionLogRepository transactionLogRepository;
+
+	@Override
+	public Account getAccount(long id) {
+		
+		Optional<Account> opt = accountRepository.findById(id);
+        if (!opt.isPresent())
+            throw new AccountNotFoundException("Account Not Found!");
+        return opt.get();
+    }
+	
+
+	@Override
+	public BigDecimal getBalance(long id) {
+		
+		return null;
+	}
+
+	@Override
+	public List<TransactionLog> getTransactions(long id) {
+		
+		return null;
+	}
+	
+}

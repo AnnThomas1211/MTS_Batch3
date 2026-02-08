@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fidelity.mts.application.dto.AccountResponse;
+import com.fidelity.mts.domain.model.Account;
 import com.fidelity.mts.service.AccountService;
 
 @RestController
@@ -21,8 +22,8 @@ public class AccountController {
 	AccountService service;
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<AccountResponse> getAccountById(@PathVariable long id) {
-		return new ResponseEntity<>(service.getAccount(id), HttpStatus.OK);
+	public ResponseEntity<Account> getAccountById(@PathVariable long id) {
+		return new ResponseEntity<Account>(service.getAccount(id), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}/balance")
