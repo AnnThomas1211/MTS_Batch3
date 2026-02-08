@@ -12,5 +12,5 @@ public interface TransactionLogRepository extends JpaRepository<TransactionLog, 
     Optional<TransactionLog> findByIdempotencyKey(String idempotencyKey);
 
     // Transaction history for an account (as sender or receiver)
-    List<TransactionLog> findByFromAccountIdOrToAccountIdOrderByCreatedOnDesc(Long fromAccountId, Long toAccountId);
+    List<TransactionLog> findByFromAccountIdOrToAccountIdOrderByCreatedOnDesc(long fromAccountId, long toAccountId);
 }

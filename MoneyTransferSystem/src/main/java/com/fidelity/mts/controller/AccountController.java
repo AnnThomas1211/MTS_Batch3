@@ -1,6 +1,7 @@
 package com.fidelity.mts.controller;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fidelity.mts.application.dto.AccountResponse;
+import com.fidelity.mts.application.dto.TransferResponse;
 import com.fidelity.mts.service.AccountService;
 
 @RestController
@@ -30,7 +32,10 @@ public class AccountController {
 		return new ResponseEntity<>(service.getBalance(id), HttpStatus.OK);
 	}
 	
-	
+	@GetMapping("/{id}/transactions")
+	public ResponseEntity<List<TransferResponse>> getTransactions(@PathVariable long id) {
+		return new ResponseEntity<>(service.getTransactions(id), HttpStatus.OK);
+	}
 	
 	
 }

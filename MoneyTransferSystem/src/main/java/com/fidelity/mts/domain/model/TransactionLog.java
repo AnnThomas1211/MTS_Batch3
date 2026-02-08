@@ -1,7 +1,6 @@
 package com.fidelity.mts.domain.model;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import jakarta.persistence.*;
@@ -19,11 +18,13 @@ public class TransactionLog {
 	private UUID id;
 	
 	@NotNull
-	@Column(name = "from_account")
+	@ManyToOne
+	@JoinColumn(name = "from_account")
 	private long fromAccountId;
 	
 	@NotNull
-	@Column(name = "to_account")
+	@ManyToOne
+	@JoinColumn(name = "to_account")
 	private long toAccountId;
 	
 	@NotNull
