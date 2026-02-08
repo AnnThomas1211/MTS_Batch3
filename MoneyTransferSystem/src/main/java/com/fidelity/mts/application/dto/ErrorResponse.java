@@ -1,6 +1,5 @@
 package com.fidelity.mts.application.dto;
 
-public record ErrorResponse(String error, String message,
-		String timestamp, String path) {
+public record ErrorResponse(String error, String message) {
 
 }

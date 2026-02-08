@@ -1,8 +1,36 @@
 package com.fidelity.mts.controller;
 
+import java.math.BigDecimal;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public class AccountController {
+import com.fidelity.mts.application.dto.AccountResponse;
+import com.fidelity.mts.service.AccountService;
 
+@RestController
+@RequestMapping("/api/v1/accounts")
+public class AccountController {
+	
+	@Autowired
+	AccountService service;
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<AccountResponse> getAccountById(@PathVariable long id) {
+		return new ResponseEntity<>(service.getAccount(id), HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/balance")
+	public ResponseEntity<BigDecimal> getAccountBalance(@PathVariable long id) {
+		return new ResponseEntity<>(service.getBalance(id), HttpStatus.OK);
+	}
+	
+	
+	
+	
 }

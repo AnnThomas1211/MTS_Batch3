@@ -7,7 +7,7 @@ import com.fidelity.mts.application.dto.AccountResponse;
 import com.fidelity.mts.application.dto.TransferResponse;
 
 public interface AccountService {
-    AccountResponse getAccount(Long id);
-    BigDecimal getBalance(Long id);
-    List<TransferResponse> getTransactions(Long id);
+    AccountResponse getAccount(long id);
+    BigDecimal getBalance(long id);
+    List<TransferResponse> getTransactions(long id);
 }
