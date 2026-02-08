@@ -7,14 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fidelity.mts.application.dto.AccountResponse;
-import com.fidelity.mts.application.dto.TransferResponse;
 import com.fidelity.mts.domain.exception.AccountNotFoundException;
 import com.fidelity.mts.domain.model.Account;
 import com.fidelity.mts.domain.model.TransactionLog;
 import com.fidelity.mts.repo.AccountRepository;
 import com.fidelity.mts.repo.TransactionLogRepository;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class AccountServiceImpl implements AccountService {

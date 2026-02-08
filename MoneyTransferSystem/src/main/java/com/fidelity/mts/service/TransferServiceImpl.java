@@ -80,6 +80,10 @@ public class TransferServiceImpl implements TransferService {
     private TransactionLog executeTransfer(TransferRequest request) {
         TransactionLog transactionLog = null;
         
+        if (request.fromAccountId() == request.toAccountId()) {
+        	throw new InvalidTransferException();
+        }
+        
         try {
             // Step 1: Fetch and lock accounts
             Account fromAccount = accountRepository.findById(request.fromAccountId())
@@ -110,7 +114,7 @@ public class TransferServiceImpl implements TransferService {
             // Step 6: Create successful transaction log
             transactionLog = new TransactionLog(
                 request.fromAccountId(),
-                request.fromAccountId(),
+                request.toAccountId(),
                 request.amount(),
                 TransactionStatus.SUCCESS,
                 request.idempotencyKey()
@@ -135,12 +139,6 @@ public class TransferServiceImpl implements TransferService {
         }
     }
 
-    /**
-     * Builds a success response from a transaction log.
-     * 
-     * @param log the transaction log
-     * @return the transfer response
-     */
     private TransferResponse buildSuccessResponse(TransactionLog log) {
         return new TransferResponse(
             "TRX-" + log.getId(),

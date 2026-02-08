@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.fidelity.mts.application.dto.AccountResponse;
-import com.fidelity.mts.application.dto.TransferResponse;
 import com.fidelity.mts.domain.model.TransactionLog;
 
 public interface AccountService {
