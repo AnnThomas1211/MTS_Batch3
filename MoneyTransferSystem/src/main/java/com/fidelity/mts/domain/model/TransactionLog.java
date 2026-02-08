@@ -18,13 +18,11 @@ public class TransactionLog {
 	private UUID id;
 	
 	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "from_account")
+	@Column(name = "from_account")
 	private long fromAccountId;
 	
 	@NotNull
-	@ManyToOne
-	@JoinColumn(name = "to_account")
+	@Column(name = "to_account")
 	private long toAccountId;
 	
 	@NotNull
@@ -40,23 +38,25 @@ public class TransactionLog {
 	private String failureReason;
 	
 	@Column(name = "idempotency_key", unique = true, length = 100)
-	private String idempotencyKey;
+	private UUID idempotencyKey;
 	
 	@Column(name = "created_on")
 	private LocalDateTime createdOn;
 	
 	public TransactionLog() {}
-	public TransactionLog(long fromAccountId, long toAccountId, BigDecimal amount, TransactionStatus status,
-			String failureReason, String idempotencyKey) {
+	
+	public TransactionLog(long fromAccountId, long toAccountId, BigDecimal amount, TransactionStatus status, UUID idempotencyKey) {
 		this.id = UUID.randomUUID();
 		this.fromAccountId = fromAccountId;
 		this.toAccountId = toAccountId;
 		this.amount = amount;
 		this.status = status;
-		this.failureReason = failureReason;
+		this.failureReason = null;
 		this.idempotencyKey = idempotencyKey;
 		this.createdOn = LocalDateTime.now();
 	}
+	
+	
 	public UUID getId() {
 		return id;
 	}
@@ -93,10 +93,10 @@ public class TransactionLog {
 	public void setFailureReason(String failureReason) {
 		this.failureReason = failureReason;
 	}
-	public String getIdempotencyKey() {
+	public UUID getIdempotencyKey() {
 		return idempotencyKey;
 	}
-	public void setIdempotencyKey(String idempotencyKey) {
+	public void setIdempotencyKey(UUID idempotencyKey) {
 		this.idempotencyKey = idempotencyKey;
 	}
 	public LocalDateTime getCreatedOn() {

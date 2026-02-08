@@ -8,8 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.fidelity.mts.application.dto.AccountResponse;
 import com.fidelity.mts.application.dto.TransferResponse;
+import com.fidelity.mts.domain.exception.AccountNotFoundException;
+import com.fidelity.mts.domain.model.Account;
+import com.fidelity.mts.domain.model.TransactionLog;
 import com.fidelity.mts.repo.AccountRepository;
 import com.fidelity.mts.repo.TransactionLogRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -22,21 +27,26 @@ public class AccountServiceImpl implements AccountService {
 	
 	
 	@Override
-	public AccountResponse getAccount(long id) {
-		
-		return null;
-	}
+    public AccountResponse getAccount(long id) {
+        Account account = accountRepository.findById(id)
+            .orElseThrow(() -> new AccountNotFoundException(id));
+        
+        return AccountResponse.fromAccount(account);
+    }
 
 	@Override
-	public BigDecimal getBalance(long id) {
-		
-		return null;
-	}
+	 public BigDecimal getBalance(long id) {
+        Account account = accountRepository.findById(id)
+            .orElseThrow(() -> new AccountNotFoundException(id));
+        
+        return account.getBalance();
+    }
+
 
 	@Override
-	public List<TransferResponse> getTransactions(long id) {
-		
-		return null;
+	public List<TransactionLog> getTransactions(long id) {
+		List<TransactionLog> log = transactionLogRepository.findByFromAccountIdOrToAccountIdOrderByCreatedOnDesc(id, id);
+		return log;
 	}
 	
 }

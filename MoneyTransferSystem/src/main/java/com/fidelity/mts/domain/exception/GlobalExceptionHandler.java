@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleInvalidTransferException(InvalidTransferException e) {
 		ErrorResponse res = new ErrorResponse("VAL-422", e.getMessage());
 		
-		return new ResponseEntity<>(res, HttpStatus.UNPROCESSABLE_CONTENT);
+		return new ResponseEntity<>(res, HttpStatus.UNPROCESSABLE_ENTITY);
 	}
 	
 	

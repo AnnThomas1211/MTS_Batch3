@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface TransactionLogRepository extends JpaRepository<TransactionLog, UUID> {
 
-    Optional<TransactionLog> findByIdempotencyKey(String idempotencyKey);
+    Optional<TransactionLog> findByIdempotencyKey(UUID idempotencyKey);
 
     // Transaction history for an account (as sender or receiver)
     List<TransactionLog> findByFromAccountIdOrToAccountIdOrderByCreatedOnDesc(long fromAccountId, long toAccountId);

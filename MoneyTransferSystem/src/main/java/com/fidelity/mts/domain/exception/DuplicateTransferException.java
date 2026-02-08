@@ -1,16 +1,13 @@
 package com.fidelity.mts.domain.exception;
 
+import java.util.UUID;
+
 @SuppressWarnings("serial")
 public class DuplicateTransferException extends RuntimeException {
 
-    private final String transferId;
 
-    public DuplicateTransferException(String transferId) {
-        super("Duplicate transfer detected with ID: " + transferId);
-        this.transferId = transferId;
+    public DuplicateTransferException(UUID idempotencyKey) {
+        super("Duplicate transfer detected with ID: " + idempotencyKey);
     }
 
-    public String getTransferId() {
-        return transferId;
-    }
 }

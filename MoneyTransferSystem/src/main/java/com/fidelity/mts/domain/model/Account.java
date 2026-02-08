@@ -38,6 +38,9 @@ public class Account {
 	@Column(name = "last_updated")
 	private LocalDateTime lastUpdated;
 
+	public Account() {
+		
+	}
 	public Account(long id, @NotNull String holderName, @NotNull BigDecimal balance, @NotNull AccountStatus status,
 			int version, LocalDateTime lastUpdated) {
 		super();
