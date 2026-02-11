@@ -1,0 +1,40 @@
+.transaction-list {
+  padding-bottom: 80px; /* Space for fixed bottom nav */
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+}
+
+.transaction-item {
+  transition: background-color 0.2s ease;
+}
+
+.transaction-item:hover {
+  background-color: #f8f9fa;
+}
+
+.transaction-icon {
+  flex-shrink: 0;
+}
+
+/* Smooth scrolling */
+.transaction-list {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for webkit browsers */
+.transaction-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.transaction-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.transaction-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.transaction-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
