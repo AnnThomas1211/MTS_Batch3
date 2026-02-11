@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-transfer-component',
-  imports: [],
+  standalone: false,
   templateUrl: './transfer-component.html',
   styleUrl: './transfer-component.css',
 })

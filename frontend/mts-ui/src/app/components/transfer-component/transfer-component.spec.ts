@@ -8,7 +8,7 @@ describe('TransferComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TransferComponent]
+      declarations: [TransferComponent]
     })
     .compileComponents();
 
