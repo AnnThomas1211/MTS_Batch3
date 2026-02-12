@@ -26,6 +26,12 @@ public class TransactionLog {
 	private long toAccountId;
 	
 	@NotNull
+	private String fromAccountName;
+	
+	@NotNull
+	private String toAccountName;
+	
+	@NotNull
 	@Column(name = "amount", precision = 18)
 	private BigDecimal amount;
 	
@@ -45,10 +51,12 @@ public class TransactionLog {
 	
 	public TransactionLog() {}
 	
-	public TransactionLog(long fromAccountId, long toAccountId, BigDecimal amount, TransactionStatus status, UUID idempotencyKey) {
+	public TransactionLog(long fromAccountId, long toAccountId, String fromAccountName, String toAccountName, BigDecimal amount, TransactionStatus status, UUID idempotencyKey) {
 		this.id = UUID.randomUUID();
 		this.fromAccountId = fromAccountId;
 		this.toAccountId = toAccountId;
+		this.fromAccountName = fromAccountName;
+		this.toAccountName = toAccountName;
 		this.amount = amount;
 		this.status = status;
 		this.failureReason = null;
@@ -74,6 +82,18 @@ public class TransactionLog {
 	}
 	public void setToAccountId(long toAccountId) {
 		this.toAccountId = toAccountId;
+	}
+	public String getFromAccountName() {
+		return fromAccountName;
+	}
+	public void setFromAccountName(String fromAccountName) {
+		this.fromAccountName = fromAccountName;
+	}
+	public String getToAccountName() {
+		return toAccountName;
+	}
+	public void setToAccountName(String toAccountName) {
+		this.toAccountName = toAccountName;
 	}
 	public BigDecimal getAmount() {
 		return amount;

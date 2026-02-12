@@ -88,16 +88,20 @@ public class TransferServiceImpl implements TransferService {
 
             toAccount.credit(request.amount());
 
-            accountRepository.save(fromAccount);
-            accountRepository.save(toAccount);
+            
 
             transactionLog = new TransactionLog(
                 request.fromAccountId(),
                 request.toAccountId(),
+                fromAccount.getHolderName(),
+                toAccount.getHolderName(),
                 request.amount(),
                 TransactionStatus.SUCCESS,
                 request.idempotencyKey()
             );
+            
+            accountRepository.save(fromAccount);
+            accountRepository.save(toAccount);
             
             return transactionLogRepository.save(transactionLog);
 
@@ -105,6 +109,8 @@ public class TransferServiceImpl implements TransferService {
             transactionLog = new TransactionLog(
                 request.fromAccountId(),
                 request.toAccountId(),
+                "",
+                "",
                 request.amount(),
                 TransactionStatus.FAILED,
                 request.idempotencyKey()
@@ -119,10 +125,12 @@ public class TransferServiceImpl implements TransferService {
     private TransferResponse buildSuccessResponse(TransactionLog log) {
         return new TransferResponse(
             "TRX-" + log.getId(),
-            "SUCCESS",
+            TransactionStatus.SUCCESS,
             "Transfer completed",
             log.getFromAccountId(),
             log.getToAccountId(),
+            log.getFromAccountName(),
+            log.getToAccountName(),
             log.getAmount()
         );
     }

@@ -5,10 +5,12 @@ import java.math.BigDecimal;
 import com.fidelity.mts.domain.enums.Enums.TransactionStatus;
 
 public record TransferResponse(String transactionId,
-		String status,
+		TransactionStatus status,
 		String message,
 		long debitedFrom,
 		long creditedTo,
+		String fromAccountName,
+		String toAccountName,
 		BigDecimal amount) {
 
 }
