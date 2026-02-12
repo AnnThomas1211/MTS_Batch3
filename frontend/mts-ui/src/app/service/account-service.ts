@@ -16,12 +16,12 @@ export class AccountService {
   constructor(private http: HttpClient) {}
 
   getAccount(id: number) {
-    // Return cached data if available
+
     if (this.accountDataCache.has(id)) {
       return new BehaviorSubject(this.accountDataCache.get(id)).asObservable();
     }
 
-    // If request is already in flight, return the same observable
+    
     if (!this.accountCache.has(id)) {
       const request$ = this.http.get<Account>(`${this.URL}/${id}`).pipe(
         tap(data => this.accountDataCache.set(id, data)),

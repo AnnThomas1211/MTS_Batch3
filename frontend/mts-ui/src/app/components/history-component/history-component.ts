@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { AccountService } from '../../service/account-service';
 import { TransactionLog } from '../../models/transaction-log';
-import { ActivatedRoute } from '@angular/router';
-import { forkJoin } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-history-component',
@@ -12,80 +10,45 @@ import { map, switchMap } from 'rxjs/operators';
   styleUrl: './history-component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HistoryComponent {
-//   transactionDisplay: TransactionDisplay[] = [];
-//   id = 0;
+export class HistoryComponent implements OnInit {
+  transactions: TransactionLog[] = [];
+  isLoading = true;
+  errorMessage: string = '';
 
-//   constructor(
-//     private service: AccountService,
-//     private activatedRoute: ActivatedRoute,
-//   ) {
-//     this.activatedRoute.params.subscribe((params) => {
-//       this.id = params['id'];
-//     });
-//   }
+  accountId: number = 1;
 
-//   ngOnInit(): void {
-//     this.service.getAccountTransactions(this.id).pipe(
-//       switchMap((transactions: TransactionLog[]) => {
-//         // If no transactions, return empty array
-//         if (!transactions || transactions.length === 0) {
-//           return [];
-//         }
+  constructor(private accountService: AccountService){}
 
-//         // Create an array of observables to fetch account names
-//         const accountRequests = transactions.map((transaction) => {
-//           const otherAccountId = transaction.fromAccountId == this.id
-//             ? transaction.toAccountId
-//             : transaction.fromAccountId;
+  ngOnInit(): void {
+    this.loadTransactions();
+  }
 
-//           return this.service.getAccount(otherAccountId).pipe(
-//             map((account) => ({
-//               amount: transaction.amount,
-//               isSender: transaction.fromAccountId == this.id,
-//               status: transaction.status,
-//               name: account.holderName,
-//               time: transaction.createdOn,
-//             }))
-//           );
-//         });
+  loadTransactions(): void {
+    this.accountService.getAccountTransactions(this.accountId).subscribe({
+      next: (data : TransactionLog[]) => {
+        this.transactions = data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.message;
+        this.isLoading = false;
+      }
+    })
+  }
 
-//         // Wait for all account requests to complete
-//         return forkJoin(accountRequests);
-//       })
-//     ).subscribe((displayData: TransactionDisplay[]) => {
-//       this.transactionDisplay = displayData;
-//     });
-//   }
+  get failedTransactions(): TransactionLog[] {
+    return this.transactions.filter(t => t.status === 'FAILED' && t.failureReason);
+  }
 
-//   getStatusClass(status: string): string {
-//     switch (status?.toLowerCase()) {
-//       case 'success':
-//       case 'completed':
-//         return 'text-success';
-//       case 'pending':
-//         return 'text-warning';
-//       case 'failed':
-//         return 'text-danger';
-//       default:
-//         return 'text-secondary';
-//     }
-//   }
+  get successfulCount(): number {
+    return this.transactions.filter(t => t.status === 'SUCCESS').length;
+  }
 
-//   formatAmount(amount: number, isSender: boolean): string {
-//     const prefix = isSender ? '-' : '+';
-//     return `${prefix}₹${amount.toFixed(2)}`;
-//   }
+  get failedCount(): number {
+    return this.transactions.filter(t => t.status === 'FAILED').length;
+  }
 
-//   getAmountClass(isSender: boolean): string {
-//     return isSender ? 'text-danger' : 'text-success';
-//   }
-// }
-
-// export interface TransactionDisplay {
-//   isSender: boolean;
-//   name: string;
-//   amount: number;
-//   status: string;
-//   time: Date;
+  get hasFailedTransactions(): boolean {
+    return this.transactions.some(t => t.status === 'FAILED' && t.failureReason);
+  }
 }
