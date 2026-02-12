@@ -17,7 +17,7 @@ import com.fidelity.mts.domain.model.TransactionLog;
 import com.fidelity.mts.service.AccountService;
 
 @RestController
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/accounts")
 public class AccountController {
 	

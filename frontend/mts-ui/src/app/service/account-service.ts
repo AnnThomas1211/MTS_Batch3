@@ -11,20 +11,17 @@ export class AccountService {
   constructor(private http: HttpClient) {}
 
   getAccount(id: number) {
-    return this.http.get<Account>(`${URL}/${id}`)
+    return this.http.get<Account>(`${this.URL}/${id}`)
   }
 
   getAccountBalance(id: number) {
-    return this.http.get<number>(`${URL}/${id}/balance`)
+    return this.http.get<number>(`${this.URL}/${id}/balance`)
   }
 
   getAccountTransactions(id: number) {
     console.log(id);
-    let resp = this.http.get<TransactionLog[]>(`http://localhost:8080/api/v1/accounts/${id}/transactions`)
+    let resp = this.http.get<TransactionLog[]>(`${this.URL}/${id}/transactions`)
     return resp;
   }
-
-
-  
 }
 
