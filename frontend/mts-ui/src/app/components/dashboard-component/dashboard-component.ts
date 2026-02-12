@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit{
 
   loadAccount() {
     // temp substitute accId
-    this.accountService.getAccount(3)
+    this.accountService.getAccount(2)
     .subscribe(data => this.account = data);
     console.log(this.account?.id);
   }

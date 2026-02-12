@@ -12,80 +12,80 @@ import { map, switchMap } from 'rxjs/operators';
   styleUrl: './history-component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HistoryComponent implements OnInit {
-  transactionDisplay: TransactionDisplay[] = [];
-  id = 0;
+export class HistoryComponent {
+//   transactionDisplay: TransactionDisplay[] = [];
+//   id = 0;
 
-  constructor(
-    private service: AccountService,
-    private activatedRoute: ActivatedRoute,
-  ) {
-    this.activatedRoute.params.subscribe((params) => {
-      this.id = params['id'];
-    });
-  }
+//   constructor(
+//     private service: AccountService,
+//     private activatedRoute: ActivatedRoute,
+//   ) {
+//     this.activatedRoute.params.subscribe((params) => {
+//       this.id = params['id'];
+//     });
+//   }
 
-  ngOnInit(): void {
-    this.service.getAccountTransactions(this.id).pipe(
-      switchMap((transactions: TransactionLog[]) => {
-        // If no transactions, return empty array
-        if (!transactions || transactions.length === 0) {
-          return [];
-        }
+//   ngOnInit(): void {
+//     this.service.getAccountTransactions(this.id).pipe(
+//       switchMap((transactions: TransactionLog[]) => {
+//         // If no transactions, return empty array
+//         if (!transactions || transactions.length === 0) {
+//           return [];
+//         }
 
-        // Create an array of observables to fetch account names
-        const accountRequests = transactions.map((transaction) => {
-          const otherAccountId = transaction.fromAccountId == this.id 
-            ? transaction.toAccountId 
-            : transaction.fromAccountId;
-          
-          return this.service.getAccount(otherAccountId).pipe(
-            map((account) => ({
-              amount: transaction.amount,
-              isSender: transaction.fromAccountId == this.id,
-              status: transaction.status,
-              name: account.holderName,
-              time: transaction.createdOn,
-            }))
-          );
-        });
+//         // Create an array of observables to fetch account names
+//         const accountRequests = transactions.map((transaction) => {
+//           const otherAccountId = transaction.fromAccountId == this.id
+//             ? transaction.toAccountId
+//             : transaction.fromAccountId;
 
-        // Wait for all account requests to complete
-        return forkJoin(accountRequests);
-      })
-    ).subscribe((displayData: TransactionDisplay[]) => {
-      this.transactionDisplay = displayData;
-    });
-  }
+//           return this.service.getAccount(otherAccountId).pipe(
+//             map((account) => ({
+//               amount: transaction.amount,
+//               isSender: transaction.fromAccountId == this.id,
+//               status: transaction.status,
+//               name: account.holderName,
+//               time: transaction.createdOn,
+//             }))
+//           );
+//         });
 
-  getStatusClass(status: string): string {
-    switch (status?.toLowerCase()) {
-      case 'success':
-      case 'completed':
-        return 'text-success';
-      case 'pending':
-        return 'text-warning';
-      case 'failed':
-        return 'text-danger';
-      default:
-        return 'text-secondary';
-    }
-  }
+//         // Wait for all account requests to complete
+//         return forkJoin(accountRequests);
+//       })
+//     ).subscribe((displayData: TransactionDisplay[]) => {
+//       this.transactionDisplay = displayData;
+//     });
+//   }
 
-  formatAmount(amount: number, isSender: boolean): string {
-    const prefix = isSender ? '-' : '+';
-    return `${prefix}₹${amount.toFixed(2)}`;
-  }
+//   getStatusClass(status: string): string {
+//     switch (status?.toLowerCase()) {
+//       case 'success':
+//       case 'completed':
+//         return 'text-success';
+//       case 'pending':
+//         return 'text-warning';
+//       case 'failed':
+//         return 'text-danger';
+//       default:
+//         return 'text-secondary';
+//     }
+//   }
 
-  getAmountClass(isSender: boolean): string {
-    return isSender ? 'text-danger' : 'text-success';
-  }
-}
+//   formatAmount(amount: number, isSender: boolean): string {
+//     const prefix = isSender ? '-' : '+';
+//     return `${prefix}₹${amount.toFixed(2)}`;
+//   }
 
-export interface TransactionDisplay {
-  isSender: boolean;
-  name: string;
-  amount: number;
-  status: string;
-  time: Date;
+//   getAmountClass(isSender: boolean): string {
+//     return isSender ? 'text-danger' : 'text-success';
+//   }
+// }
+
+// export interface TransactionDisplay {
+//   isSender: boolean;
+//   name: string;
+//   amount: number;
+//   status: string;
+//   time: Date;
 }

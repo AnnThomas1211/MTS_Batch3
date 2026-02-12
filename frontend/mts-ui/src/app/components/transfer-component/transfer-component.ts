@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common'
 import { TransferService } from '../../service/transfer-service'
 import { TransferRequest } from '../../models/transfer-request'
 import { TransferResponse } from '../../models/transfer-response'
+import { Router } from '@angular/router'
+import { AccountService } from '../../service/account-service'
 
 @Component({
   selector: 'app-transfer',
@@ -18,7 +20,7 @@ export class TransferComponent {
   resultMessage: string | null = null
   success: boolean | null = null
 
-  constructor(private fb: FormBuilder, private transferService: TransferService) {
+  constructor(private fb: FormBuilder, private transferService: TransferService, private router: Router, private accountService: AccountService) {
     this.transferForm = this.fb.group({
       fromAccountId: [''],
       toAccountId: ['', Validators.required],
@@ -43,6 +45,10 @@ export class TransferComponent {
         next: (response: TransferResponse) => {
           this.success = response.status === 'SUCCESS'
           this.resultMessage = response.message
+          // Invalidate account cache after successful transfer
+          if (this.success) {
+            this.accountService.refreshAccount(request.fromAccountId)
+          }
         },
         error: () => {
           this.success = false
@@ -53,8 +59,9 @@ export class TransferComponent {
   }
 
   cancel(): void {
-    this.transferForm.reset()
-    this.resultMessage = null
-    this.success = null
+    this.transferForm.reset();
+    this.resultMessage = null;
+    this.success = null;
+    this.router.navigate(['/']);
   }
 }
