@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Account } from '../../models/account';
 import { AccountService } from '../../service/account-service';
 
@@ -7,6 +7,7 @@ import { AccountService } from '../../service/account-service';
   standalone: false,
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements OnInit{
 

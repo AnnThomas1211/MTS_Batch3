@@ -44,10 +44,10 @@
               <tbody>
                 <tr *ngFor="let transaction of transactions" [ngClass]="{'table-light': transaction.status === 'FAILED'}">
                   <td>
-                    <span class="badge bg-primary">XXXX-0{{ transaction.fromAccountId }}</span>
+                    <span class="badge bg-primary">{{ transaction.fromAccountName }}</span>
                   </td>
                   <td>
-                    <span class="badge bg-info">XXXX-0{{ transaction.toAccountId }}</span>
+                    <span class="badge bg-info">{{ transaction.toAccountName }}</span>
                   </td>
                   <td>
                     <span class="fw-bold">$ {{ transaction.amount | number: '1.2-2' }}</span>

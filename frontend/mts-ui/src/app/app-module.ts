@@ -7,6 +7,7 @@ import { LoginComponent } from './components/login-component/login-component';
 import { DashboardComponent } from './components/dashboard-component/dashboard-component';
 import { HistoryComponent } from './components/history-component/history-component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 
 @NgModule({
@@ -22,9 +23,14 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
   ],
   providers: [
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: Http
+    // },
     provideBrowserGlobalErrorListeners(),
     provideClientHydration(withEventReplay()),
+    provideHttpClient(withFetch()),
   ],
-  bootstrap: [App]
+  bootstrap: [App],
 })
-export class AppModule { }
+export class AppModule {}

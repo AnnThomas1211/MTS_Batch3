@@ -1,20 +1,24 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { AccountService } from '../../service/account-service';
 import { TransactionLog } from '../../models/transaction-log';
+import { ActivatedRoute } from '@angular/router';
+import { timeStamp } from 'console';
+import { forkJoin, Timestamp } from 'rxjs';
+import { Account } from '../../models/account';
 
 @Component({
   selector: 'app-history-component',
   standalone: false,
   templateUrl: './history-component.html',
   styleUrls: ['./history-component.css'], // also corrected
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
-export class HistoryComponent implements OnInit {
+export class HistoryComponent implements OnInit{
   transactions: TransactionLog[] = [];
+  // id = 2;
   isLoading = true;
   errorMessage = '';
-  accountId = 1;
-
+  accountId = 2;
   constructor(
     private accountService: AccountService,
     private cdr: ChangeDetectorRef  // ← added
