@@ -1,23 +1,24 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AccountService } from '../../service/account-service';
 import { TransactionLog } from '../../models/transaction-log';
-
 
 @Component({
   selector: 'app-history-component',
   standalone: false,
   templateUrl: './history-component.html',
-  styleUrl: './history-component.css',
+  styleUrls: ['./history-component.css'], // also corrected
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HistoryComponent implements OnInit {
   transactions: TransactionLog[] = [];
   isLoading = true;
-  errorMessage: string = '';
+  errorMessage = '';
+  accountId = 1;
 
-  accountId: number = 1;
-
-  constructor(private accountService: AccountService){}
+  constructor(
+    private accountService: AccountService,
+    private cdr: ChangeDetectorRef  // ← added
+  ) {}
 
   ngOnInit(): void {
     this.loadTransactions();
@@ -25,15 +26,17 @@ export class HistoryComponent implements OnInit {
 
   loadTransactions(): void {
     this.accountService.getAccountTransactions(this.accountId).subscribe({
-      next: (data : TransactionLog[]) => {
+      next: (data: TransactionLog[]) => {
         this.transactions = data;
         this.isLoading = false;
+        this.cdr.markForCheck();   // ← added
       },
       error: (error) => {
         this.errorMessage = error.message;
         this.isLoading = false;
+        this.cdr.markForCheck();   // ← added
       }
-    })
+    });
   }
 
   get failedTransactions(): TransactionLog[] {
