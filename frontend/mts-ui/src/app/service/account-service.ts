@@ -16,21 +16,7 @@ export class AccountService {
   constructor(private http: HttpClient) {}
 
   getAccount(id: number) {
-
-    if (this.accountDataCache.has(id)) {
-      return new BehaviorSubject(this.accountDataCache.get(id)).asObservable();
-    }
-
-    
-    if (!this.accountCache.has(id)) {
-      const request$ = this.http.get<Account>(`${this.URL}/${id}`).pipe(
-        tap(data => this.accountDataCache.set(id, data)),
-        shareReplay(1)
-      );
-      this.accountCache.set(id, request$);
-    }
-
-    return this.accountCache.get(id)!;
+    return this.http.get<Account>(`${this.URL}/${id}`)
   }
 
   getAccountBalance(id: number) {

@@ -9,12 +9,12 @@
       <div class="card main-card p-4">
 
         <p class="text-muted mb-1">Good Morning, 👋</p>
-        <h4 class="fw-bold"> {{ account?.holderName || 'Rod Johnson'}}</h4>
+        <h4 class="fw-bold"> {{ account().holderName}}</h4>
 
         <div class="balance-card mt-3">
           <p class="text-muted mb-1">Available Balance</p>
-          <h2 class="fw-bold">$ {{account?.balance || '45,00,000'}}</h2>
-          <p class="small opacity-75"> Account XXXX-XXXX-000{{account?.id}}</p><p></p>
+          <h2 class="fw-bold">$ {{account().balance}}</h2>
+          <p class="small opacity-75"> Account XXXX-XXXX-000{{account().id}}</p><p></p>
         </div>
 
         <div class="row g-3 mt-4 text-center">
