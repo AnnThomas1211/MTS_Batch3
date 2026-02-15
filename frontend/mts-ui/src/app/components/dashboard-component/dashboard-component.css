@@ -38,7 +38,7 @@
 }
 
 .balance-card{
-  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  background: linear-gradient(135deg, #0f172a 0%, #253968 100%);
   color: white;
   padding: 20px;
   border-radius: 15px;

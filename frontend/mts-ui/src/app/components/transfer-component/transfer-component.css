@@ -64,7 +64,7 @@
 }
 
 .info-card {
-  background: #f8fafc;
+  background:linear-gradient(135deg, #0f172a 0%, #253968 100%);
   border: 1px solid #e2e8f0;
   transition: 0.3s ease;
 }

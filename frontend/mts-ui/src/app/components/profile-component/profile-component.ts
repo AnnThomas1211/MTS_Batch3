@@ -12,7 +12,7 @@ import { AccountStatus } from '../../enums/AccountStatus';
   styleUrl: './profile-component.css',
 })
 export class ProfileComponent implements OnInit{
-  appVersion = '0.0.1';
+  appVersion = '1.1.1';
   account = signal<Account>({
     id: 0,
     holderName: '',
