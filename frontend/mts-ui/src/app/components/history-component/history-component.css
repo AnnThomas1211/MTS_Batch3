@@ -1,0 +1,116 @@
+.transaction-list {
+
+  padding-bottom: 80px; /* Space for fixed bottom nav */
+
+  max-height: calc(100vh - 140px);
+
+  overflow-y: auto;
+
+}
+ 
+.transaction-item {
+
+  transition: background-color 0.2s ease;
+
+}
+ 
+.transaction-item:hover {
+
+  background-color: #f8f9fa;
+
+}
+ 
+.transaction-icon {
+
+  flex-shrink: 0;
+
+}
+ 
+/* Smooth scrolling */
+
+.transaction-list {
+
+  scroll-behavior: smooth;
+
+}
+ 
+/* Custom scrollbar for webkit browsers */
+
+.transaction-list::-webkit-scrollbar {
+
+  width: 6px;
+
+}
+ 
+.transaction-list::-webkit-scrollbar-track {
+
+  background: #f1f1f1;
+
+}
+ 
+.transaction-list::-webkit-scrollbar-thumb {
+
+  background: #888;
+
+  border-radius: 3px;
+
+}
+ 
+.transaction-list::-webkit-scrollbar-thumb:hover {
+
+  background: #555;
+}
+
+.history-wrapper{
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding-bottom: 80px;
+}
+
+.history-header{
+  background: linear-gradient(90deg, #0f172a,#1e293b);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.step-badge{
+  background: #38bdf8;
+  color: #0f172a;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+.bottom-nav{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.nav-item{
+  text-align: center;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.nav-item.active {
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+

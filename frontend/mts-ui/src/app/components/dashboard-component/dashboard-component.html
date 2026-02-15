@@ -1,0 +1,58 @@
+<div class="dashboard-wrapper">
+    <div class="dashboard-header">
+      <span class="step-badge">2</span>
+      <span class="header-title">Dashboard Screen</span>
+      <span class="ms-auto text-light">Account Overview</span>
+    </div>
+
+    <div class="container mt-4">
+      <div class="card main-card p-4">
+
+        <p class="text-muted mb-1">Good Morning, 👋</p>
+        <h4 class="fw-bold"> {{ account().holderName}}</h4>
+
+        <div class="balance-card mt-3">
+          <p class="text-muted mb-1">Available Balance</p>
+          <h2 class="fw-bold">$ {{account().balance}}</h2>
+          <p class="small opacity-75"> Account XXXX-XXXX-000{{account().id}}</p><p></p>
+        </div>
+
+        <div class="row g-3 mt-4 text-center">
+          <div class="col-6">
+            <div class="action-card bg" routerLink="/transfer">
+              <span class="icon-box">💰</span>
+              <p>Transfer</p>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="action-card" routerLink="/history">
+              <span class="icon-box">📜</span>
+              <p>History</p>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="action-card" routerLink="/profile">
+              <span class="icon-box">🙎‍♂️</span>
+              <p>Profile</p>
+            </div>
+          </div>
+
+          <div class="col-6">
+            <div class="action-card text-danger" routerLink="/transfer">
+              <span class="icon-box">🚪</span>
+              <p>Logout</p>
+            </div>
+          </div>
+
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active" routerLink="/">🏠<br>Home</div>
+      <div class="nav-item active" routerLink="/transfer">💸<br>Transfer</div>
+      <div class="nav-item active" routerLink="/history">📜<br>History</div>
+    </div>
+
+</div>

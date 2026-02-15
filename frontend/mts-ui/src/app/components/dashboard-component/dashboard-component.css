@@ -1,0 +1,100 @@
+.dashboard-wrapper{
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding-bottom: 80px;
+}
+
+.dashboard-header{
+  background: linear-gradient(90deg, #0f172a,#1e293b);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.step-badge{
+  background: #38bdf8;
+  color: #0f172a;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+.header-title{
+  font-weight: 500;
+  padding-left: 20px;
+}
+
+.main-card{
+  border-radius: 20px;
+  border: none;
+}
+
+.balance-card{
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  color: white;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.action-card{
+  background: #f8fafc;
+  padding: 20px 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: 02.s;
+  font-size: 22px;
+}
+
+.action-card p {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.action-card:hover{
+  background: #e5e7eb;
+}
+
+.bottom-nav{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+.nav-item{
+  text-align: center;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.nav-item.active {
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.icon-box{
+  width: 42px;
+  height: 42px;
+  background: #88bddb;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  font-size: 20px;
+}
