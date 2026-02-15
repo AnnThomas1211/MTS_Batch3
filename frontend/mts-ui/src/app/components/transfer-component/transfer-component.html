@@ -10,11 +10,8 @@
         <div class="card-header bg-primary text-white">
           <h5 class="mb-0">Money Transfer</h5>
         </div>
-
         <div class="card-body p-4">
           <form [formGroup]="transferForm" (ngSubmit)="submitTransfer()">
-
-            <!-- From Account -->
             <div class="mb-3">
               <label for="fromAccountId" class="form-label fw-bold">From Account</label>
               <input
@@ -25,8 +22,6 @@
                 placeholder="Enter your account number"
               />
             </div>
-
-            <!-- To Account -->
             <div class="mb-3">
               <label for="toAccountId" class="form-label fw-bold">To Account</label>
               <input
@@ -36,13 +31,16 @@
                 type="text"
                 placeholder="Enter recipient account number"
               />
-              <div *ngIf="transferForm.get('toAccountId')?.invalid && transferForm.get('toAccountId')?.touched"
-                   class="text-danger small mt-2">
+              <div
+                *ngIf="
+                  transferForm.get('toAccountId')?.invalid &&
+                  transferForm.get('toAccountId')?.touched
+                "
+                class="text-danger small mt-2"
+              >
                 Destination account is required
               </div>
             </div>
-
-            <!-- Amount -->
             <div class="mb-4">
               <label for="amount" class="form-label fw-bold">Amount</label>
               <div class="input-group input-group-lg">
@@ -57,24 +55,26 @@
                   placeholder="0.00"
                 />
               </div>
-              <div *ngIf="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched"
-                   class="text-danger small mt-2">
+              <div
+                *ngIf="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched"
+                class="text-danger small mt-2"
+              >
                 Enter a valid amount (min $0.01)
               </div>
             </div>
-
-            <!-- Buttons -->
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-end">
               <button
                 type="submit"
                 [disabled]="!transferForm.valid"
-                class="btn btn-success btn-lg px-4">
+                class="btn btn-success btn-lg px-4"
+              >
                 Transfer Now
               </button>
               <button
                 type="button"
                 (click)="cancel()"
-                class="btn btn-outline-secondary btn-lg px-4">
+                class="btn btn-outline-secondary btn-lg px-4"
+              >
                 Cancel
               </button>
             </div>
@@ -88,7 +88,6 @@
     <div class="nav-item active" (click)="goToHistory()">📜<br>History</div>
       </div>
 
-      <!-- Result Message -->
       <div *ngIf="resultMessage"
            [ngClass]="{'alert-success': success, 'alert-danger': !success}"
            class="alert alert-dismissible fade show mt-4"
@@ -99,8 +98,15 @@
           type="button"
           class="btn-close"
           (click)="resultMessage = null"
-          aria-label="Close">
-        </button>
+          aria-label="Close"
+        ></button>
+      </div>
+      <div *ngIf="errorToast" class="error-toast">
+        <div class="error-toast-content">
+          <span class="error-toast-icon">&#9888;</span>
+          <span class="error-toast-message">{{ errorToast }}</span>
+          <button class="error-toast-close" (click)="dismissToast()">&times;</button>
+        </div>
       </div>
     </div>
   </div>

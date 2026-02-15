@@ -1,4 +1,3 @@
-// transfer.component.ts
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -20,6 +19,9 @@ export class TransferComponent {
   transferForm: FormGroup;
   resultMessage: string | null = null;
   success: boolean | null = null;
+  errorToast: string | null = null;
+
+  private toastTimeout: any;
 
   constructor(
     private fb: FormBuilder,
@@ -27,8 +29,6 @@ export class TransferComponent {
     private router: Router,
     private accountService: AccountService,
   ) {
-
-
     this.transferForm = this.fb.group({
       fromAccountId: [''],
       toAccountId: ['', Validators.required],
@@ -53,15 +53,14 @@ export class TransferComponent {
         next: (response: TransferResponse) => {
           this.success = response.status === 'SUCCESS';
           this.resultMessage = response.message;
-          // Invalidate account cache after successful transfer
           if (this.success) {
             this.accountService.refreshAccount(request.fromAccountId);
             this.router.navigate(['/']);
           }
         },
-        error: () => {
-          this.success = false;
-          this.resultMessage = 'Transfer failed. Please try again.';
+
+        error: (err: any) => {
+          this.showErrorToast(err.message || 'Transfer failed. Please try again.');
         },
       });
     }
@@ -84,5 +83,17 @@ export class TransferComponent {
 
   goToHistory(): void {
     this.router.navigate(['/history']);
+  }
+  showErrorToast(message: string): void {
+    this.errorToast = message;
+    clearTimeout(this.toastTimeout);
+    this.toastTimeout = setTimeout(() => {
+      this.errorToast = null;
+    }, 5000);
+  }
+
+  dismissToast(): void {
+    this.errorToast = null;
+    clearTimeout(this.toastTimeout);
   }
 }
