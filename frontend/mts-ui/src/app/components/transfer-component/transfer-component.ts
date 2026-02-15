@@ -28,9 +28,11 @@ export class TransferComponent {
     private transferService: TransferService,
     private router: Router,
     private accountService: AccountService,
+    private authService: AuthService
   ) {
+    const accountId = this.authService.getAccountId();
     this.transferForm = this.fb.group({
-      fromAccountId: [''],
+      fromAccountId: [{value: accountId, disabled: true}],
       toAccountId: ['', Validators.required],
       amount: ['', [Validators.required, Validators.min(0.01)]],
     });
