@@ -1,3 +1,4 @@
+import { AuthService } from './../../service/auth-service';
 import { Component, computed, effect, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../../service/account-service';
@@ -11,7 +12,7 @@ import { AccountStatus } from '../../enums/AccountStatus';
   styleUrl: './profile-component.css',
 })
 export class ProfileComponent implements OnInit{
-  appVersion = '0.0.0';
+  appVersion = '0.0.1';
   account = signal<Account>({
     id: 0,
     holderName: '',
@@ -20,15 +21,15 @@ export class ProfileComponent implements OnInit{
     lastUpdated: new Date(),
   });
 
-  constructor(private accountService: AccountService) {
+  constructor(private accountService: AccountService, private authService : AuthService) {
   }
 
   ngOnInit(): void {
-      this.fetchAccount();
+    this.fetchAccount();
   }
 
   fetchAccount(): void {
-    this.accountService.getAccount(2).subscribe({
+    this.accountService.getAccount(this.authService.getAccountId() || 0).subscribe({
       next: (data) => {
         if (data) {
           this.account.set(data);

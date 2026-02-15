@@ -7,6 +7,7 @@ import { TransferRequest } from '../../models/transfer-request';
 import { TransferResponse } from '../../models/transfer-response';
 import { Router } from '@angular/router';
 import { AccountService } from '../../service/account-service';
+import { AuthService } from '../../service/auth-service';
 
 @Component({
   selector: 'app-transfer',
@@ -26,6 +27,8 @@ export class TransferComponent {
     private router: Router,
     private accountService: AccountService,
   ) {
+
+
     this.transferForm = this.fb.group({
       fromAccountId: [''],
       toAccountId: ['', Validators.required],
@@ -69,5 +72,17 @@ export class TransferComponent {
     this.resultMessage = null;
     this.success = null;
     this.router.navigate(['/']);
+  }
+
+  goToDashboard(): void {
+    this.router.navigate(['/']);
+  }
+
+  goToTransfer(): void {
+    this.router.navigate(['/transfer']);
+  }
+
+  goToHistory(): void {
+    this.router.navigate(['/history']);
   }
 }

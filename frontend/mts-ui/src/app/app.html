@@ -1,15 +1,1 @@
-<nav class="navbar" *ngIf="authService.isLoggedIn()">
-  <div class="nav-brand">Money Transfer System</div>
-  <div class="nav-links">
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-    <a routerLink="/transfer" routerLinkActive="active">Transfer</a>
-    <a routerLink="/history" routerLinkActive="active">History</a>
-    <a routerLink="/profile" routerLinkActive="active">Profile</a>
-  </div>
-  <div class="nav-user">
-    <span>{{ authService.getUsername() }}</span>
-    <button class="logout-btn" (click)="logout()">Logout</button>
-  </div>
-</nav>
-
 <router-outlet></router-outlet>
