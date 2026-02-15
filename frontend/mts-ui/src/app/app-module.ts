@@ -8,6 +8,7 @@ import { DashboardComponent } from './components/dashboard-component/dashboard-c
 import { HistoryComponent } from './components/history-component/history-component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { ProfileComponent } from './components/profile-component/profile-component';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
     LoginComponent,
     DashboardComponent,
     HistoryComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,
