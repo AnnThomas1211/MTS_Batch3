@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../service/auth-service';
 import { Account } from '../../models/account';
 import { AccountService } from '../../service/account-service';
 import { AccountStatus } from '../../enums/AccountStatus';
@@ -20,18 +22,31 @@ export class DashboardComponent implements OnInit {
     lastUpdated: new Date()
   });
 
-  constructor(private accountService: AccountService) {}
+  constructor(
+    private accountService: AccountService,
+    private auth: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadAccount();
   }
 
   loadAccount() {
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     // temp substitute accId
-    this.accountService.getAccount(4).subscribe((data) => {
+    this.accountService.getAccount(2).subscribe((data) => {
       if (data)
         this.account.set(data);
     });
     console.log(this.account().id);
+  }
+
+  logout(){
+    this.auth.logout();
   }
 }
