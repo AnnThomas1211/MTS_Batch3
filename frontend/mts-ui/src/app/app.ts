@@ -1,4 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
+import { AuthService } from './service/auth-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,11 @@ import { Component, signal } from '@angular/core';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('mts-ui');
+  title = 'mts-ui';
+
+  constructor(public authService: AuthService, private router: Router) {}
+
+  logout(): void {
+    this.authService.logout();
+  }
 }

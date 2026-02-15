@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth-service';
 
@@ -9,22 +9,27 @@ import { AuthService } from '../../service/auth-service';
   templateUrl: './login-component.html',
   styleUrl: './login-component.css',
 })
-export class LoginComponent{
+export class LoginComponent {
+  loginForm: FormGroup;
+  errorMessage: string | null = null;
 
-  username: string = '';
-  password: string = '';
-  errorMessage: string = '';
-
-  constructor(private authService: AuthService, private router: Router) {}
-
-  login(): void {
-    this.authService.login(this.username, this.password).subscribe((success) => {
-      if (success) {
-        this.router.navigate(['/']);
-      } else {
-        this.errorMessage = 'Invalid username or password';
-      }
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required],
+      accountId: ['', [Validators.required, Validators.min(1)]],
     });
   }
-}
 
+  onSubmit(): void {
+    if (this.loginForm.valid) {
+      const { username, password, accountId } = this.loginForm.value;
+      this.authService.login(username, password, accountId);
+      this.router.navigate(['/dashboard']);
+    }
+  }
+}

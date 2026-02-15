@@ -5,36 +5,46 @@ import { TransferComponent } from './components/transfer-component/transfer-comp
 import { HistoryComponent } from './components/history-component/history-component';
 import { ProfileComponent } from './components/profile-component/profile-component';
 import { LoginComponent } from './components/login-component/login-component';
+import { AuthGuard } from './guards/auth-guard';
 
 const routes: Routes = [
   {
-    path : 'transfer',
-    component : TransferComponent
+    path: 'login',
+    component: LoginComponent,
   },
   {
-    path : 'history',
-    component : HistoryComponent
+    path: 'transfer',
+    component: TransferComponent,
+    canActivate: [AuthGuard],
   },
   {
-    path : 'profile',
-    component : ProfileComponent
+    path: 'history',
+    component: HistoryComponent,
+    canActivate: [AuthGuard],
   },
   {
-    path : '',
-    component : DashboardComponent
+    path: 'profile',
+    component: ProfileComponent,
+    canActivate: [AuthGuard],
   },
   {
-    path : 'dashboard',
-  component : DashboardComponent
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
   },
   {
-    path : 'login',
-    component : LoginComponent
-  }
+    path: '',
+    redirectTo: 'dashboard',
+    pathMatch: 'full',
+  },
+  {
+    path: '**',
+    redirectTo: 'dashboard',
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

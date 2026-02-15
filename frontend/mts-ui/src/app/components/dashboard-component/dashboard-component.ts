@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '../../service/auth-service';
 import { Account } from '../../models/account';
 import { AccountService } from '../../service/account-service';
 import { AccountStatus } from '../../enums/AccountStatus';
+import { AuthService } from '../../service/auth-service';
 
 @Component({
   selector: 'app-dashboard-component',
@@ -24,8 +23,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
-    private auth: AuthService,
-    private router: Router
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -33,20 +31,11 @@ export class DashboardComponent implements OnInit {
   }
 
   loadAccount() {
-    if (!this.auth.isLoggedIn()) {
-      this.router.navigate(['/login']);
-      return;
-    }
-
-    // temp substitute accId
-    this.accountService.getAccount(2).subscribe((data) => {
+    const accId = this.authService.getAccountId() ?? 0;
+    this.accountService.getAccount(accId).subscribe((data) => {
       if (data)
         this.account.set(data);
     });
     console.log(this.account().id);
-  }
-
-  logout(){
-    this.auth.logout();
   }
 }

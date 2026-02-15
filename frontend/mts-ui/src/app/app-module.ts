@@ -7,9 +7,10 @@ import { LoginComponent } from './components/login-component/login-component';
 import { DashboardComponent } from './components/dashboard-component/dashboard-component';
 import { HistoryComponent } from './components/history-component/history-component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { ProfileComponent } from './components/profile-component/profile-component';
-import { AuthInterceptor } from './service/auth-interceptor';
+import { AuthInterceptor } from './interceptors/auth-interceptor';
+import { CommonModule } from '@angular/common';
 
 
 @NgModule({
@@ -24,17 +25,17 @@ import { AuthInterceptor } from './service/auth-interceptor';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule,
+    CommonModule,
   ],
   providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideClientHydration(withEventReplay()),
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
     },
-    provideBrowserGlobalErrorListeners(),
-    provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch()),
   ],
   bootstrap: [App],
 })

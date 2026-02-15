@@ -50,9 +50,9 @@ export class TransferComponent {
         next: (response: TransferResponse) => {
           this.success = response.status === 'SUCCESS';
           this.resultMessage = response.message;
+          // Invalidate account cache after successful transfer
           if (this.success) {
             this.accountService.refreshAccount(request.fromAccountId);
-            alert('Transfer successful!');
             this.router.navigate(['/']);
           }
         },

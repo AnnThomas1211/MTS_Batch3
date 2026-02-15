@@ -1,72 +1,69 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import { catchError, map, Observable, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
-  private baseUrl = 'http://localhost:8080/api/v1/accounts/2';
+  private readonly TOKEN_KEY = 'auth_token';
+  private readonly USER_KEY = 'auth_user';
+  private readonly ACCOUNT_ID_KEY = 'account_id';
+  private isBrowser: boolean;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  private loggedIn: BehaviorSubject<boolean>;
+  isLoggedIn$;
 
-  login(username: string, password: string): Observable<any> {
-
-    const token = btoa(`${username}:${password}`);
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Basic ${token}`,
-    });
-
-    return new Observable(observer => {
-      this.http.get(`${this.baseUrl}`, { headers }).subscribe({
-        next: (res) =>{
-          if (this.storageAvailable()) {
-            sessionStorage.setItem('authToken', token);
-            sessionStorage.setItem('username', username);
-          }
-          observer.next(res);
-          observer.complete();
-        },
-        error: (err) => {
-          observer.error(err);
-        }
-      });
-    });
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) platformId: Object,
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+    this.loggedIn = new BehaviorSubject<boolean>(this.hasToken());
+    this.isLoggedIn$ = this.loggedIn.asObservable();
   }
 
-  getToken(): string | null {
-    if (!this.storageAvailable()) return null;
-    return sessionStorage.getItem('authToken');
+  login(username: string, password: string, accountId: number): void {
+    const token = btoa(`${username}:${password}`);
+    if (this.isBrowser) {
+      localStorage.setItem(this.TOKEN_KEY, token);
+      localStorage.setItem(this.USER_KEY, username);
+      localStorage.setItem(this.ACCOUNT_ID_KEY, accountId.toString());
+    }
+    this.loggedIn.next(true);
   }
 
   logout(): void {
-    if (this.storageAvailable()) {
-      sessionStorage.clear();
+    if (this.isBrowser) {
+      localStorage.removeItem(this.TOKEN_KEY);
+      localStorage.removeItem(this.USER_KEY);
+      localStorage.removeItem(this.ACCOUNT_ID_KEY);
     }
+    this.loggedIn.next(false);
     this.router.navigate(['/login']);
   }
 
-  isLoggedIn(): boolean {
-    if (!this.storageAvailable()) return false;
-    return !! sessionStorage.getItem('authToken');
+  getToken(): string | null {
+    return this.isBrowser ? localStorage.getItem(this.TOKEN_KEY) : null;
   }
 
   getUsername(): string | null {
-    if (!this.storageAvailable()) return '';
-    return sessionStorage.getItem('username') || '';
+    return this.isBrowser ? localStorage.getItem(this.USER_KEY) : null;
   }
 
-  private storageAvailable(): boolean {
-    try {
-      return typeof window !== 'undefined' && !!window.sessionStorage;
-    } catch (e) {
-      return false;
-    }
+  getAccountId(): number | null {
+    if (!this.isBrowser) return null;
+    const id = localStorage.getItem(this.ACCOUNT_ID_KEY);
+    return id ? Number(id) : null;
   }
 
+  isLoggedIn(): boolean {
+    return this.hasToken();
+  }
+
+  private hasToken(): boolean {
+    return this.isBrowser ? !!localStorage.getItem(this.TOKEN_KEY) : false;
+  }
 }
-
