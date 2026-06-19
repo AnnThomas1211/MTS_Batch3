@@ -20,6 +20,7 @@ public class SpringSecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http.csrf(csrf->csrf.disable());
+        http.cors(Customizer.withDefaults());
 		
 		http.authorizeHttpRequests(
 				auth->auth.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()

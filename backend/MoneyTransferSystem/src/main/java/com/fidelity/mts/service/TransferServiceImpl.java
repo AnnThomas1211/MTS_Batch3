@@ -31,6 +31,9 @@ public class TransferServiceImpl implements TransferService {
 	@Autowired
     TransactionLogRepository transactionLogRepository;
 
+    @Autowired
+    RewardService rewardService;
+
 
     @Transactional
     public TransferResponse transfer(TransferRequest request) {
@@ -102,7 +105,8 @@ public class TransferServiceImpl implements TransferService {
             
             accountRepository.save(fromAccount);
             accountRepository.save(toAccount);
-            
+
+            rewardService.evaluateAndGrant(transactionLog);
             return transactionLogRepository.save(transactionLog);
 
         } catch (Exception e) {
@@ -117,7 +121,8 @@ public class TransferServiceImpl implements TransferService {
             );
             transactionLog.setFailureReason(e.getMessage());
             transactionLogRepository.save(transactionLog);
-            
+
+
             throw e;
         }
     }
