@@ -40,7 +40,8 @@ public class RewardService implements RewardServiceInterface {
             return;
         }
 
-        int points = transaction.getAmount().divide(RUPEES_PER_POINT).intValueExact();
+        // Compute whole reward points by taking the integral part (round down)
+        int points = transaction.getAmount().divideToIntegralValue(RUPEES_PER_POINT).intValue();
 
         RewardLedger entry = new RewardLedger();
         entry.setAccountId(transaction.getFromAccountId());
@@ -72,8 +73,8 @@ public class RewardService implements RewardServiceInterface {
         if (transaction.getStatus() != TransactionStatus.SUCCESS) {
             return false;
         }
-        // Rule 2: amount must be greater than ₹100
-        if (transaction.getAmount().compareTo(REWARD_THRESHOLD) <= 0) {
+        // Rule 2: amount must be at least ₹100
+        if (transaction.getAmount().compareTo(REWARD_THRESHOLD) < 0) {
             return false;
         }
         // Rules 3 & 4: sender and receiver must be different accounts
