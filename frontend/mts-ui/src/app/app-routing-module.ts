@@ -28,6 +28,12 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'rewards',
+    loadComponent: () =>
+      import('./components/reward-component/reward-component').then((m) => m.RewardComponent),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard],

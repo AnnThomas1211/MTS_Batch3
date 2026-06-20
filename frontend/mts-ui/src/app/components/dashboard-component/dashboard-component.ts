@@ -38,4 +38,8 @@ export class DashboardComponent implements OnInit {
     });
     console.log(this.account().id);
   }
+
+  logout() {
+    this.authService.logout();
+  }
 }

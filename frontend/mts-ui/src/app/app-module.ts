@@ -11,11 +11,13 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi
 import { ProfileComponent } from './components/profile-component/profile-component';
 import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { CommonModule } from '@angular/common';
+import { TopNavbarComponent } from './components/top-navbar-component/top-navbar-component';
 
 
 @NgModule({
   declarations: [
     App,
+    TopNavbarComponent,
     LoginComponent,
     DashboardComponent,
     HistoryComponent,
