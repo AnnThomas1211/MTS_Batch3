@@ -16,7 +16,22 @@
               <h2 class="fw-bold mb-1">Earned from transactions</h2>
               <p class="text-muted mb-0">Points awarded for completed transfers are listed below.</p>
             </div>
+          </div>
 
+          <!-- Reward Points Explanation Blob -->
+          <div class="rewards-info-blob mb-4 p-3 rounded-4 border" style="background-color: #f8fafc; border-color: #e2e8f0 !important;">
+            <div class="d-flex align-items-start">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill text-primary me-2 mt-1" viewBox="0 0 16 16">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+              </svg>
+              <div>
+                <h6 class="fw-bold mb-1 text-dark" style="font-size: 0.9rem;">How to Earn Points</h6>
+                <p class="text-muted mb-0 small">
+                  Earn <strong>1 point for every $100</strong> transferred (rounded down) on any successful transfer to another account. 
+                  A minimum transfer amount of <strong>$100</strong> is required to qualify.
+                </p>
+              </div>
+            </div>
           </div>
 
           @if (isLoading()) {

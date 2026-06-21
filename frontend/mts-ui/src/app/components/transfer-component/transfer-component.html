@@ -109,19 +109,27 @@
         </form>
       </div>
 
-      <!-- Success toast -->
-      <div *ngIf="resultMessage && success"
-           class="alert alert-success alert-dismissible fade show mt-4 rounded-3 shadow-sm border-0"
-           role="alert"
-           style="background-color: #ecfdf5; color: #065f46; border-left: 4px solid #10b981 !important;">
-        <strong>Success!</strong>
-        <span class="ms-1">{{ resultMessage }}</span>
-        <button
-          type="button"
-          class="btn-close"
-          (click)="resultMessage = null"
-          aria-label="Close"
-        ></button>
+      <!-- Custom Success Alert Overlay -->
+      <div *ngIf="showSuccessAlert" class="success-overlay">
+        <div class="success-card shadow-lg p-5 text-center">
+          <div class="success-icon-container mb-4">
+            <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+              <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+          </div>
+          <h3 class="fw-bold text-dark mb-2">Transaction Successful!</h3>
+          <p class="text-muted mb-4">{{ resultMessage || 'Your transfer was completed successfully.' }}</p>
+          
+          <div class="spinner-border spinner-border-sm text-primary mb-3" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="text-muted small mb-4">Redirecting to Dashboard in a few seconds...</p>
+          
+          <button class="btn btn-primary px-4 py-2 fw-semibold rounded-3 shadow-sm" (click)="goToDashboard()">
+            Go to Dashboard Now
+          </button>
+        </div>
       </div>
 
       <!-- Error toast -->

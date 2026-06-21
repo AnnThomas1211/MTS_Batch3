@@ -25,8 +25,10 @@ export class TransferComponent implements OnInit, OnDestroy {
   success: boolean | null = null;
   toastVisible = false;
   toastMessage: string | null = null;
+  showSuccessAlert = false;
 
   private toastTimeout: any;
+  private redirectTimeout: any;
   private toAccountSub?: Subscription;
 
   constructor(
@@ -99,6 +101,9 @@ export class TransferComponent implements OnInit, OnDestroy {
     if (this.toastTimeout) {
       clearTimeout(this.toastTimeout);
     }
+    if (this.redirectTimeout) {
+      clearTimeout(this.redirectTimeout);
+    }
   }
 
   private generateIdempotencyKey(): string {
@@ -120,9 +125,16 @@ export class TransferComponent implements OnInit, OnDestroy {
           if (this.success) {
             this.resultMessage = response.message;
             this.accountService.refreshAccount(request.fromAccountId);
-            this.router.navigate(['/dashboard']);
+            this.showSuccessAlert = true;
+            this.cdr.detectChanges();
+            
+            // Navigate after 3 seconds
+            this.redirectTimeout = setTimeout(() => {
+              this.router.navigate(['/dashboard']);
+            }, 3000);
           } else {
             this.resultMessage = null;
+            this.showSuccessAlert = false;
           }
         },
 
