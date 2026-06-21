@@ -75,11 +75,10 @@
         </div>
       </div>
 
-      <div *ngIf="resultMessage"
-           [ngClass]="{'alert-success': success, 'alert-danger': !success}"
-           class="alert alert-dismissible fade show mt-4"
+      <div *ngIf="resultMessage && success"
+           class="alert alert-success alert-dismissible fade show mt-4"
            role="alert">
-        <strong>{{ success ? 'Success!' : 'Error!' }}</strong>
+        <strong>Success!</strong>
         <span>{{ resultMessage }}</span>
         <button
           type="button"
@@ -88,10 +87,10 @@
           aria-label="Close"
         ></button>
       </div>
-      <div *ngIf="errorToast" class="error-toast">
+      <div *ngIf="toastVisible" class="error-toast">
         <div class="error-toast-content">
           <span class="error-toast-icon">&#9888;</span>
-          <span class="error-toast-message">{{ errorToast }}</span>
+          <span class="error-toast-message">{{ toastMessage }}</span>
           <button class="error-toast-close" (click)="dismissToast()">&times;</button>
         </div>
       </div>

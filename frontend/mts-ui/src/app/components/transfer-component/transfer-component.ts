@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TransferService } from '../../service/transfer-service';
@@ -19,7 +19,8 @@ export class TransferComponent {
   transferForm: FormGroup;
   resultMessage: string | null = null;
   success: boolean | null = null;
-  errorToast: string | null = null;
+  toastVisible = false;
+  toastMessage: string | null = null;
 
   private toastTimeout: any;
 
@@ -28,7 +29,8 @@ export class TransferComponent {
     private transferService: TransferService,
     private router: Router,
     private accountService: AccountService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
     const accountId = this.authService.getAccountId();
     this.transferForm = this.fb.group({
@@ -54,14 +56,18 @@ export class TransferComponent {
       this.transferService.transfer(request).subscribe({
         next: (response: TransferResponse) => {
           this.success = response.status === 'SUCCESS';
-          this.resultMessage = response.message;
           if (this.success) {
+            this.resultMessage = response.message;
             this.accountService.refreshAccount(request.fromAccountId);
             this.router.navigate(['/']);
+          } else {
+            this.resultMessage = null;
           }
         },
 
         error: (err: any) => {
+          this.resultMessage = null;
+          this.success = null;
           this.showErrorToast(err.message || 'Transfer failed. Please try again.');
         },
       });
@@ -86,16 +92,30 @@ export class TransferComponent {
   goToHistory(): void {
     this.router.navigate(['/history']);
   }
+
   showErrorToast(message: string): void {
-    this.errorToast = message;
     clearTimeout(this.toastTimeout);
+    this.toastVisible = false;
+    this.toastMessage = null;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.toastMessage = message;
+      this.toastVisible = true;
+      this.cdr.detectChanges();
+    }, 0);
+
     this.toastTimeout = setTimeout(() => {
-      this.errorToast = null;
+      this.toastVisible = false;
+      this.toastMessage = null;
+      this.cdr.detectChanges();
     }, 5000);
   }
 
   dismissToast(): void {
-    this.errorToast = null;
+    this.toastVisible = false;
+    this.toastMessage = null;
     clearTimeout(this.toastTimeout);
+    this.cdr.detectChanges();
   }
 }
