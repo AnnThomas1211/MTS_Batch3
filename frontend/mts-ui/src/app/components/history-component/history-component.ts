@@ -18,7 +18,14 @@ export class HistoryComponent implements OnInit{
   transactions: TransactionLog[] = [];
   isLoading = true;
   errorMessage = '';
-  accountId =0;
+  accountId = 0;
+
+  // Filter properties
+  statusFilter: 'ALL' | 'SUCCESS' | 'FAILED' = 'ALL';
+  senderSearch = '';
+  recipientSearch = '';
+  dateSearch = '';
+
   constructor(
     private accountService: AccountService,
     private authService: AuthService,
@@ -45,8 +52,80 @@ export class HistoryComponent implements OnInit{
     });
   }
 
+  get filteredTransactions(): TransactionLog[] {
+    return this.transactions.filter(t => {
+      // 1. Status Filter
+      if (this.statusFilter !== 'ALL' && t.status !== this.statusFilter) {
+        return false;
+      }
+      
+      // 2. Recipient Search
+      if (this.recipientSearch.trim()) {
+        const query = this.recipientSearch.toLowerCase().trim();
+        const toName = t.toAccountName ? t.toAccountName.toLowerCase() : '';
+        const toId = t.toAccountId ? String(t.toAccountId) : '';
+        if (!toName.includes(query) && !toId.includes(query)) {
+          return false;
+        }
+      }
+
+      // 3. Sender Search
+      if (this.senderSearch.trim()) {
+        const query = this.senderSearch.toLowerCase().trim();
+        const fromName = t.fromAccountName ? t.fromAccountName.toLowerCase() : '';
+        const fromId = t.fromAccountId ? String(t.fromAccountId) : '';
+        if (!fromName.includes(query) && !fromId.includes(query)) {
+          return false;
+        }
+      }
+
+      // 4. Date Search
+      if (this.dateSearch) {
+        const searchDate = new Date(this.dateSearch).toDateString();
+        const txDate = new Date(t.createdOn).toDateString();
+        if (searchDate !== txDate) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
+
+  onStatusFilterChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.statusFilter = select.value as 'ALL' | 'SUCCESS' | 'FAILED';
+    this.cdr.markForCheck();
+  }
+
+  onSenderSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.senderSearch = input.value;
+    this.cdr.markForCheck();
+  }
+
+  onRecipientSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.recipientSearch = input.value;
+    this.cdr.markForCheck();
+  }
+
+  onDateSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.dateSearch = input.value;
+    this.cdr.markForCheck();
+  }
+
+  clearFilters(): void {
+    this.statusFilter = 'ALL';
+    this.senderSearch = '';
+    this.recipientSearch = '';
+    this.dateSearch = '';
+    this.cdr.markForCheck();
+  }
+
   get failedTransactions(): TransactionLog[] {
-    return this.transactions.filter(t => t.status === 'FAILED' && t.failureReason);
+    return this.filteredTransactions.filter(t => t.status === 'FAILED' && t.failureReason);
   }
 
   get successfulCount(): number {
@@ -58,6 +137,6 @@ export class HistoryComponent implements OnInit{
   }
 
   get hasFailedTransactions(): boolean {
-    return this.transactions.some(t => t.status === 'FAILED' && t.failureReason);
+    return this.filteredTransactions.some(t => t.status === 'FAILED' && t.failureReason);
   }
 }
