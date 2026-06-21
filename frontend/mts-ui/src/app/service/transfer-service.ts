@@ -30,7 +30,7 @@ export class TransferService {
     } else {
       // Server-side error
       if (error.status === 403) {
-        errorMessage = 'Access denied: You are not authorized to perform this transfer.'
+        errorMessage = 'You are not authorized to perform this transfer. Please check your account status.'
       } else if (error.status === 400) {
         errorMessage = error.error?.message || 'Invalid request: Please check your input.'
       } else if (error.status === 404) {

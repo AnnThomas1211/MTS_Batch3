@@ -59,7 +59,7 @@ export class TransferComponent {
           if (this.success) {
             this.resultMessage = response.message;
             this.accountService.refreshAccount(request.fromAccountId);
-            this.router.navigate(['/']);
+            this.router.navigate(['/dashboard']);
           } else {
             this.resultMessage = null;
           }
@@ -78,11 +78,11 @@ export class TransferComponent {
     this.transferForm.reset();
     this.resultMessage = null;
     this.success = null;
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 
   goToDashboard(): void {
-    this.router.navigate(['/']);
+    this.router.navigate(['/dashboard']);
   }
 
   goToTransfer(): void {

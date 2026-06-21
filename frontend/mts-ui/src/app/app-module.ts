@@ -12,6 +12,8 @@ import { ProfileComponent } from './components/profile-component/profile-compone
 import { AuthInterceptor } from './interceptors/auth-interceptor';
 import { CommonModule } from '@angular/common';
 import { TopNavbarComponent } from './components/top-navbar-component/top-navbar-component';
+import { StartPageComponent } from './components/start-page-component/start-page-component';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -19,6 +21,7 @@ import { TopNavbarComponent } from './components/top-navbar-component/top-navbar
     App,
     TopNavbarComponent,
     LoginComponent,
+    StartPageComponent,
     DashboardComponent,
     HistoryComponent,
     ProfileComponent,
@@ -28,6 +31,7 @@ import { TopNavbarComponent } from './components/top-navbar-component/top-navbar
     AppRoutingModule,
     ReactiveFormsModule,
     CommonModule,
+    RouterModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

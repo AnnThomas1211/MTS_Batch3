@@ -11,6 +11,7 @@ export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'auth_user';
   private readonly ACCOUNT_ID_KEY = 'account_id';
+  private readonly USER_ROLE_KEY = 'user_role';
   private isBrowser: boolean;
 
   private loggedIn: BehaviorSubject<boolean>;
@@ -35,14 +36,32 @@ export class AuthService {
     this.loggedIn.next(true);
   }
 
+  /**
+   * Called after a successful user login via /api/v1/users/login.
+   * Stores the admin Basic Auth token so the interceptor can authenticate
+   * all subsequent API calls (accounts, transfers, etc.) via Spring Security.
+   */
+  setUserSession(holderName: string, accountId: number): void {
+    // Admin credentials are used for Basic Auth on all protected backend endpoints
+    const token = btoa('admin:1234');
+    if (this.isBrowser) {
+      localStorage.setItem(this.TOKEN_KEY, token);
+      localStorage.setItem(this.USER_KEY, holderName);
+      localStorage.setItem(this.ACCOUNT_ID_KEY, accountId.toString());
+    }
+    this.loggedIn.next(true);
+  }
+
+
   logout(): void {
     if (this.isBrowser) {
       localStorage.removeItem(this.TOKEN_KEY);
       localStorage.removeItem(this.USER_KEY);
       localStorage.removeItem(this.ACCOUNT_ID_KEY);
+      localStorage.removeItem(this.USER_ROLE_KEY);
     }
     this.loggedIn.next(false);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/start']);
   }
 
   getToken(): string | null {

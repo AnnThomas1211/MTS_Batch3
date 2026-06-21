@@ -15,31 +15,40 @@
   max-width: 400px;
 }
 
-.admin-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 0.35rem 0.9rem;
-  margin: 0 auto 1.25rem;
-  width: fit-content;
-  color: #64748b;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .login-card h2 {
-  margin: 0 0 0.25rem;
+  margin: 0 0 1.25rem;
   text-align: center;
   color: #333;
   font-size: 1.5rem;
 }
 
+/* ── Tabs ─────────────────────────────────── */
+.tab-row {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1.25rem;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 0.6rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  margin-bottom: -1px;
+}
+
+.tab-btn.active {
+  color: #355397;
+  border-bottom-color: #355397;
+}
+
+/* ── Form ─────────────────────────────────── */
 .subtitle {
   text-align: center;
   color: #888;
@@ -92,6 +101,43 @@
   text-align: center;
 }
 
+.success-message {
+  background: #f0fff4;
+  color: #276749;
+  padding: 0.6rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.info-message {
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  text-align: center;
+  border: 1px solid #bfdbfe;
+}
+
+.link-btn {
+  background: transparent;
+  border: none;
+  color: #355397;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.25rem;
+  text-decoration: underline;
+}
+
+.link-btn:hover {
+  color: #1d4ed8;
+}
+
 button[type="submit"] {
   width: 100%;
   padding: 0.75rem;
@@ -114,19 +160,20 @@ button[type="submit"]:disabled {
   cursor: not-allowed;
 }
 
-.user-link {
+/* ── Admin link ───────────────────────────── */
+.admin-link {
   text-align: center;
   margin-top: 1.5rem;
   font-size: 0.8rem;
   color: #aaa;
 }
 
-.user-link a {
+.admin-link a {
   color: #355397;
   text-decoration: none;
   font-weight: 600;
 }
 
-.user-link a:hover {
+.admin-link a:hover {
   text-decoration: underline;
 }

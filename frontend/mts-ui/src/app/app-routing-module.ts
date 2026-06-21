@@ -5,13 +5,27 @@ import { TransferComponent } from './components/transfer-component/transfer-comp
 import { HistoryComponent } from './components/history-component/history-component';
 import { ProfileComponent } from './components/profile-component/profile-component';
 import { LoginComponent } from './components/login-component/login-component';
+import { StartPageComponent } from './components/start-page-component/start-page-component';
 import { AuthGuard } from './guards/auth-guard';
 
 const routes: Routes = [
+  // ── Public routes ────────────────────────────────────────
   {
-    path: 'login',
+    path: 'start',
+    component: StartPageComponent,
+  },
+  {
+    path: 'admin-login',
     component: LoginComponent,
   },
+  // Backwards-compat redirect: /login → /start
+  {
+    path: 'login',
+    redirectTo: 'start',
+    pathMatch: 'full',
+  },
+
+  // ── Protected routes ─────────────────────────────────────
   {
     path: 'transfer',
     component: TransferComponent,
@@ -38,14 +52,16 @@ const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard],
   },
+
+  // ── Default routes ────────────────────────────────────────
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'start',
     pathMatch: 'full',
   },
   {
     path: '**',
-    redirectTo: 'dashboard',
+    redirectTo: 'start',
   },
 ];
 

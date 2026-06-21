@@ -18,8 +18,13 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.authService.getToken();
 
+    // Public user endpoints (register / login) must NOT carry an auth header.
+    // If a stale token exists in localStorage, Spring Security would reject the
+    // request with 401 before it ever reaches the controller.
+    const isPublicUserEndpoint = req.url.includes('/api/v1/users/');
+
     let authReq = req;
-    if (token) {
+    if (token && !isPublicUserEndpoint) {
       authReq = req.clone({
         setHeaders: {
           Authorization: `Basic ${token}`,
@@ -29,7 +34,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401) {
+        // Only force logout when a PROTECTED endpoint returns 401.
+        if (error.status === 401 && !isPublicUserEndpoint) {
           this.authService.logout();
         }
         return throwError(() => error);
@@ -37,3 +43,4 @@ export class AuthInterceptor implements HttpInterceptor {
     );
   }
 }
+

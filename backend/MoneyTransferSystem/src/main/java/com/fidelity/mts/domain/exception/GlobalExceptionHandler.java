@@ -43,6 +43,15 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(res, HttpStatus.UNPROCESSABLE_ENTITY);
 	}
 	
+	@ExceptionHandler(DuplicateEmailException.class)
+	public ResponseEntity<ErrorResponse> handleDuplicateEmailException(DuplicateEmailException e) {
+		ErrorResponse res = new ErrorResponse("USR-409", e.getMessage());
+		return new ResponseEntity<>(res, HttpStatus.CONFLICT);
+	}
 	
-	
+	@ExceptionHandler(InvalidCredentialsException.class)
+	public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException e) {
+		ErrorResponse res = new ErrorResponse("USR-401", e.getMessage());
+		return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
+	}
 }

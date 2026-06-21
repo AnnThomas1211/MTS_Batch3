@@ -1,0 +1,138 @@
+<div class="login-container">
+  <div class="login-card">
+    <h2>Money Transfer System</h2>
+
+    <!-- Tab switcher -->
+    <div class="tab-row">
+      <button
+        id="tab-signin"
+        class="tab-btn"
+        [class.active]="activeTab === 'login'"
+        (click)="setTab('login')"
+      >Sign In</button>
+      <button
+        id="tab-register"
+        class="tab-btn"
+        [class.active]="activeTab === 'signup'"
+        (click)="setTab('signup')"
+      >Register</button>
+    </div>
+
+    <!-- ===== LOGIN ===== -->
+    <ng-container *ngIf="activeTab === 'login'">
+      <p class="subtitle">Sign in to your account</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input
+            id="login-email"
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+          />
+          <span class="error" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+            A valid email is required.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input
+            id="login-password"
+            type="password"
+            formControlName="password"
+            placeholder="Enter your password"
+          />
+          <span class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+            Password is required.
+          </span>
+        </div>
+
+        <div *ngIf="loginError" class="error-message">{{ loginError }}</div>
+
+        <button type="submit" id="login-btn" [disabled]="loginForm.invalid || isLoading">
+          {{ isLoading ? 'Signing in…' : 'Sign In' }}
+        </button>
+      </form>
+    </ng-container>
+
+    <!-- ===== SIGNUP ===== -->
+    <ng-container *ngIf="activeTab === 'signup'">
+      <p class="subtitle">Create a new account</p>
+
+      <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input
+            id="signup-name"
+            type="text"
+            formControlName="name"
+            placeholder="Enter your full name"
+          />
+          <span class="error" *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.invalid">
+            Name is required.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-email">Email</label>
+          <input
+            id="signup-email"
+            type="email"
+            formControlName="email"
+            placeholder="Enter your email"
+          />
+          <span class="error" *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid">
+            A valid email is required.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input
+            id="signup-password"
+            type="password"
+            formControlName="password"
+            placeholder="Min. 6 characters"
+          />
+          <span class="error" *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid">
+            Password must be at least 6 characters.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-confirm">Confirm Password</label>
+          <input
+            id="signup-confirm"
+            type="password"
+            formControlName="confirmPassword"
+            placeholder="Re-enter your password"
+          />
+          <span class="error" *ngIf="signupForm.get('confirmPassword')?.touched && signupForm.errors?.['passwordMismatch']">
+            Passwords do not match.
+          </span>
+        </div>
+
+        <!-- Duplicate email prompt -->
+        <div *ngIf="isDuplicateEmail" class="info-message">
+          {{ signupError || 'This email is already registered.' }}
+          <button type="button" class="link-btn" (click)="setTab('login')">Sign in instead →</button>
+        </div>
+
+        <!-- Generic error -->
+        <div *ngIf="signupError && !isDuplicateEmail" class="error-message">{{ signupError }}</div>
+        <div *ngIf="signupSuccess" class="success-message">{{ signupSuccess }}</div>
+
+
+        <button type="submit" id="signup-btn" [disabled]="signupForm.invalid || isLoading">
+          {{ isLoading ? 'Creating account…' : 'Create Account' }}
+        </button>
+      </form>
+    </ng-container>
+
+    <p class="admin-link">
+      Administrator? <a routerLink="/admin-login">Admin Login</a>
+    </p>
+  </div>
+</div>

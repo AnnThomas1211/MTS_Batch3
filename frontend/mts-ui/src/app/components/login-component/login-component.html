@@ -1,16 +1,22 @@
 <div class="login-container">
   <div class="login-card">
+
+    <div class="admin-badge">
+      <span>🛡️</span>
+      <span>Admin Portal</span>
+    </div>
+
     <h2>Money Transfer System</h2>
-    <p class="subtitle">Sign in to your account</p>
+    <p class="subtitle">Administrator access only</p>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="admin-username">Username</label>
         <input
-          id="username"
+          id="admin-username"
           type="text"
           formControlName="username"
-          placeholder="Enter your username"
+          placeholder="Enter admin username"
         />
         <span class="error" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid">
           Username is required.
@@ -18,12 +24,12 @@
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="admin-password">Password</label>
         <input
-          id="password"
+          id="admin-password"
           type="password"
           formControlName="password"
-          placeholder="Enter your password"
+          placeholder="Enter admin password"
         />
         <span class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
           Password is required.
@@ -31,12 +37,12 @@
       </div>
 
       <div class="form-group">
-        <label for="accountId">Account ID</label>
+        <label for="admin-accountId">Account ID</label>
         <input
-          id="accountId"
+          id="admin-accountId"
           type="number"
           formControlName="accountId"
-          placeholder="Enter your account ID"
+          placeholder="Enter account ID"
         />
         <span class="error" *ngIf="loginForm.get('accountId')?.touched && loginForm.get('accountId')?.invalid">
           A valid Account ID is required.
@@ -47,7 +53,11 @@
         {{ errorMessage }}
       </div>
 
-      <button type="submit" [disabled]="loginForm.invalid">Sign In</button>
+      <button type="submit" id="admin-login-btn" [disabled]="loginForm.invalid">Sign In as Admin</button>
     </form>
+
+    <p class="user-link">
+      Not an admin? <a routerLink="/start">Go to User Portal</a>
+    </p>
   </div>
 </div>

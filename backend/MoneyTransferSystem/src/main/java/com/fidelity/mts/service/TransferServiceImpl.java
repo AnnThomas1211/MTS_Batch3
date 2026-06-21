@@ -34,6 +34,9 @@ public class TransferServiceImpl implements TransferService {
     @Autowired
     RewardService rewardService;
 
+    @Autowired
+    private org.springframework.transaction.PlatformTransactionManager transactionManager;
+
 
     @Transactional
     public TransferResponse transfer(TransferRequest request) {
@@ -72,12 +75,16 @@ public class TransferServiceImpl implements TransferService {
         	throw new InvalidTransferException();
         }
         
+        String fromAccountName = "";
+        String toAccountName = "";
         try {
             Account fromAccount = accountRepository.findById(request.fromAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(request.fromAccountId()));
+            fromAccountName = fromAccount.getHolderName();
             
             Account toAccount = accountRepository.findById(request.toAccountId())
                 .orElseThrow(() -> new AccountNotFoundException(request.toAccountId()));
+            toAccountName = toAccount.getHolderName();
 
             if (!fromAccount.isActive()) {
                 throw new AccountNotActiveException(request.fromAccountId());
@@ -110,18 +117,25 @@ public class TransferServiceImpl implements TransferService {
             return transactionLogRepository.save(transactionLog);
 
         } catch (Exception e) {
-            transactionLog = new TransactionLog(
+            final String finalFrom = fromAccountName;
+            final String finalTo = toAccountName;
+            TransactionLog failedLog = new TransactionLog(
                 request.fromAccountId(),
                 request.toAccountId(),
-                "",
-                "",
+                finalFrom,
+                finalTo,
                 request.amount(),
                 TransactionStatus.FAILED,
                 request.idempotencyKey()
             );
-            transactionLog.setFailureReason(e.getMessage());
-            transactionLogRepository.save(transactionLog);
-
+            failedLog.setFailureReason(e.getMessage());
+            
+            org.springframework.transaction.support.TransactionTemplate template = 
+                new org.springframework.transaction.support.TransactionTemplate(transactionManager);
+            template.setPropagationBehavior(org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            template.executeWithoutResult(status -> {
+                transactionLogRepository.save(failedLog);
+            });
 
             throw e;
         }
