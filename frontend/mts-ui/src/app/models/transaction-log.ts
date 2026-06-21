@@ -1,3 +1,5 @@
+import { TransactionStatus } from '../enums/TransactionStatus';
+
 export interface TransactionLog {
   id: string;
   fromAccountId: number;

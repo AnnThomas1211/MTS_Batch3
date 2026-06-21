@@ -1,11 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AccountService } from '../../service/account-service';
 import { TransactionLog } from '../../models/transaction-log';
-import { ActivatedRoute } from '@angular/router';
-import { timeStamp } from 'console';
-import { forkJoin, Timestamp } from 'rxjs';
-import { Account } from '../../models/account';
 import { AuthService } from '../../service/auth-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-history-component',
@@ -29,8 +26,13 @@ export class HistoryComponent implements OnInit{
   constructor(
     private accountService: AccountService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef  // ← added
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
+
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
 
   ngOnInit(): void {
     this.accountId = this.authService.getAccountId() ?? 0;
@@ -81,10 +83,19 @@ export class HistoryComponent implements OnInit{
 
       // 4. Date Search
       if (this.dateSearch) {
-        const searchDate = new Date(this.dateSearch).toDateString();
-        const txDate = new Date(t.createdOn).toDateString();
-        if (searchDate !== txDate) {
-          return false;
+        const parts = this.dateSearch.split('-');
+        if (parts.length === 3) {
+          const y = Number(parts[0]);
+          const m = Number(parts[1]);
+          const d = Number(parts[2]);
+          const txDate = new Date(t.createdOn);
+          if (
+            txDate.getFullYear() !== y ||
+            (txDate.getMonth() + 1) !== m ||
+            txDate.getDate() !== d
+          ) {
+            return false;
+          }
         }
       }
 

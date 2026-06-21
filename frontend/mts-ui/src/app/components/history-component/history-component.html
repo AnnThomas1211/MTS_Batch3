@@ -2,7 +2,13 @@
     <div class="container mt-4">
       <div class="card main-card p-4">
 
-        <h5 class="fw-bold mb-4">Recent Transactions</h5>
+        <!-- Top Title / Back to Dashboard -->
+        <div class="d-flex align-items-center mb-4">
+          <button class="btn btn-link text-decoration-none p-0 me-3 text-secondary" (click)="goToDashboard()">
+            <span class="fs-4">←</span> Back
+          </button>
+          <h5 class="fw-bold mb-0">Recent Transactions</h5>
+        </div>
 
         <!-- Loading State -->
         <div *ngIf="isLoading" class="text-center py-5">

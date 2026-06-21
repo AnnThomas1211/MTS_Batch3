@@ -1,46 +1,47 @@
 <div class="dashboard-wrapper">
-    <div class="container mt-4">
-      <div class="card main-card p-4">
+  <div class="container mt-4">
+    <div class="card main-card p-4">
 
-        <p class="text-muted mb-1">Good Morning, 👋</p>
-        <h4 class="fw-bold"> {{ account().holderName}}</h4>
+      <p class="text-muted mb-1">Welcome</p>
+      <h4 class="fw-bold"> {{ account().holderName}}</h4>
 
-        <div class="balance-card mt-3">
-          <p class="text-muted mb-1">Available Balance</p>
-          <h2 class="fw-bold">$ {{account().balance}}</h2>
-          <p class="small opacity-75"> Account XXXX-XXXX-000{{account().id}}</p><p></p>
+      <div class="balance-card mt-3">
+        <p class="text-muted mb-1">Available Balance</p>
+        <h2 class="fw-bold">$ {{account().balance}}</h2>
+        <p class="small opacity-75"> Account XXXX-XXXX-000{{account().id}}</p>
+        <p></p>
+      </div>
+
+      <div class="row g-3 mt-4 text-center">
+        <div class="col-6">
+          <div class="action-card bg" routerLink="/transfer">
+            <span class="icon-box">💰</span>
+            <p>Transfer</p>
+          </div>
         </div>
 
-        <div class="row g-3 mt-4 text-center">
-          <div class="col-6">
-            <div class="action-card bg" routerLink="/transfer">
-              <span class="icon-box">💰</span>
-              <p>Transfer</p>
-            </div>
+        <div class="col-6">
+          <div class="action-card" routerLink="/history">
+            <span class="icon-box">📜</span>
+            <p>History</p>
           </div>
+        </div>
 
-          <div class="col-6">
-            <div class="action-card" routerLink="/history">
-              <span class="icon-box">📜</span>
-              <p>History</p>
-            </div>
+        <div class="col-6">
+          <div class="action-card" routerLink="/profile">
+            <span class="icon-box">🙎‍♂️</span>
+            <p>Profile</p>
           </div>
+        </div>
 
-          <div class="col-6">
-            <div class="action-card" routerLink="/profile">
-              <span class="icon-box">🙎‍♂️</span>
-              <p>Profile</p>
-            </div>
+        <div class="col-6">
+          <div class="action-card" routerLink="/rewards">
+            <span class="icon-box">🥇</span>
+            <p>Rewards</p>
           </div>
-
-          <div class="col-6">
-            <div class="action-card" routerLink="/rewards">
-              <span class="icon-box">🥇</span>
-              <p>Rewards</p>
-            </div>
-          </div>
+        </div>
 
       </div>
     </div>
 
-</div>
+  </div>

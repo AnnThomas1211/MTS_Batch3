@@ -2,6 +2,13 @@
   <div class="container mt-4">
     <!-- Profile Card -->
     <div *ngIf="account()" class="card main-card p-4">
+      <!-- Back to Dashboard -->
+      <div class="d-flex align-items-center mb-3">
+        <button class="btn btn-link text-decoration-none p-0 text-secondary" (click)="goToDashboard()">
+          <span class="fs-4">←</span> Back
+        </button>
+      </div>
+
       <!-- Account Holder Name -->
       <div class="mb-4">
         <p class="text-muted mb-1 small">ACCOUNT HOLDER</p>

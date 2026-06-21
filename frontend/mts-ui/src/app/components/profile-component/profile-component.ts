@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AccountService } from '../../service/account-service';
 import { Account } from '../../models/account';
 import { AccountStatus } from '../../enums/AccountStatus';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-component',
@@ -21,7 +22,14 @@ export class ProfileComponent implements OnInit{
     lastUpdated: new Date(),
   });
 
-  constructor(private accountService: AccountService, private authService : AuthService) {
+  constructor(
+    private accountService: AccountService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   ngOnInit(): void {
