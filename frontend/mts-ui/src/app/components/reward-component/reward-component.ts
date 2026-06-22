@@ -7,6 +7,7 @@ import { Reward } from '../../models/reward';
 
 @Component({
   selector: 'app-reward',
+  standalone: true,
   imports: [CommonModule, DatePipe],
   templateUrl: './reward-component.html',
   styleUrl: './reward-component.css',
@@ -19,7 +20,9 @@ export class RewardComponent implements OnInit {
 
   readonly rewards = signal<Reward[]>([]);
   readonly isLoading = signal(true);
+  readonly isRedeeming = signal(false); // New signal for button loading state
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null); // New signal for success feedback
   readonly totalPoints = signal(0);
 
   ngOnInit(): void {
@@ -36,6 +39,34 @@ export class RewardComponent implements OnInit {
 
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  // New method to handle redemption
+  redeemRewards(): void {
+    const accountId = this.authService.getAccountId();
+    const points = this.totalPoints();
+
+    if (!accountId || points <= 0) return;
+
+    this.isRedeeming.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+
+    // Assuming you add a redeemPoints method to your RewardService that takes accountId and points
+    this.rewardService.redeemPoints(accountId, points).subscribe({
+      next: () => {
+        this.successMessage.set(`Successfully redeemed ${points} points for $${points}!`);
+        this.isRedeeming.set(false);
+
+        // Reload rewards to reflect the updated state
+        // (Assuming your backend marks them as redeemed or deletes them)
+        this.loadRewards(accountId);
+      },
+      error: (error: Error) => {
+        this.errorMessage.set(error.message || 'Unable to redeem rewards at this time.');
+        this.isRedeeming.set(false);
+      },
+    });
   }
 
   private loadRewards(accountId: number): void {

@@ -1,9 +1,11 @@
 package com.fidelity.mts.service;
 
-
 import com.fidelity.mts.domain.enums.Enums.*;
+import com.fidelity.mts.domain.exception.AccountNotFoundException;
+import com.fidelity.mts.domain.model.Account;
 import com.fidelity.mts.domain.model.TransactionLog;
 import com.fidelity.mts.domain.model.RewardLedger;
+import com.fidelity.mts.repo.AccountRepository;
 import com.fidelity.mts.repo.RewardLedgerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,22 +16,25 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Component("RewardService")
 public class RewardService implements RewardServiceInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(RewardService.class);
 
-    // Minimum amount (exclusive) required for reward eligibility
     private static final BigDecimal REWARD_THRESHOLD = BigDecimal.valueOf(100);
-    // One point per this many rupees
     private static final BigDecimal RUPEES_PER_POINT = BigDecimal.valueOf(100);
 
     private final RewardLedgerRepository rewardLedgerRepository;
 
+    // Inject AccountRepository to update the account balance
+    private final AccountRepository accountRepository;
+
     @Autowired
-    public RewardService(RewardLedgerRepository rewardLedgerRepository) {
+    public RewardService(RewardLedgerRepository rewardLedgerRepository, AccountRepository accountRepository) {
         this.rewardLedgerRepository = rewardLedgerRepository;
+        this.accountRepository = accountRepository;
     }
 
     @Override
@@ -65,18 +70,49 @@ public class RewardService implements RewardServiceInterface {
         return rewardLedgerRepository.findByAccountIdOrderByCreatedAtDesc(accountId);
     }
 
+    // --- NEW REDEEM METHOD ---
+    @Override
+    @Transactional
+    public int redeemPoints(long accountId) {
+        int totalPoints = getRewardBalance(accountId);
+
+        if (totalPoints <= 0) {
+            throw new IllegalArgumentException("No reward points available to redeem.");
+        }
+
+        // 1. Fetch the account
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
+
+        // 2. Add cash to balance (1 point = ₹1) using your existing credit method
+        BigDecimal cashAmount = BigDecimal.valueOf(totalPoints);
+        account.credit(cashAmount);
+        accountRepository.save(account);
+
+        // 3. Create a negative ledger entry to zero out the points balance while keeping history
+        RewardLedger redemptionEntry = new RewardLedger();
+        redemptionEntry.setAccountId(accountId);
+        redemptionEntry.setTransactionId(UUID.randomUUID()); // 0 or null to indicate system transaction
+        redemptionEntry.setPointsAwarded(-totalPoints); // Negative points to balance it to 0
+        redemptionEntry.setCreatedAt(LocalDateTime.now());
+        redemptionEntry.setDescription("Redeemed " + totalPoints + " point(s) for ₹" + cashAmount);
+
+        rewardLedgerRepository.save(redemptionEntry);
+
+        logger.info("Redeemed {} point(s) for ₹{} for account {}", totalPoints, cashAmount, accountId);
+
+        return totalPoints;
+    }
+
     // ── private helpers ──────────────────────────────────────────────────────
 
     private boolean isEligible(TransactionLog transaction) {
-        // Rule 1: must be a successful transaction
         if (transaction.getStatus() != TransactionStatus.SUCCESS) {
             return false;
         }
-        // Rule 2: amount must be greater than ₹100
         if (transaction.getAmount().compareTo(REWARD_THRESHOLD) <= 0) {
             return false;
         }
-        // Rules 3 & 4: sender and receiver must be different accounts
         if (transaction.getFromAccountId() == transaction.getToAccountId()) {
             return false;
         }

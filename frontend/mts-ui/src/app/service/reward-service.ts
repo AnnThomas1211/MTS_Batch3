@@ -16,6 +16,20 @@ export class RewardService {
     return this.http.get<Reward[]>(`${this.url}/${accountId}`).pipe(catchError(this.handleError));
   }
 
+  /**
+   * Redeems accumulated reward points for account balance.
+   * Sends a POST request to: http://localhost:8080/api/v1/accounts/rewards/{accountId}/redeem
+   * * @param accountId The ID of the account redeeming points
+   * @param points The number of points to convert to dollars
+   */
+  redeemPoints(accountId: number, points: number): Observable<any> {
+    return this.http
+      .post<any>(`${this.url}/${accountId}/redeem`, { points })
+      .pipe(catchError(this.handleError));
+  }
+
+
+
   private handleError(error: HttpErrorResponse) {
     const errorMessage =
       error.error instanceof ErrorEvent
