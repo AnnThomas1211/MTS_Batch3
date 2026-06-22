@@ -5,7 +5,7 @@
 }
 
 .dashboard-header{
-  background: linear-gradient(90deg, #0f172a,#1e293b);
+  background: linear-gradient(90deg, #1e3a8a, #2563eb);
   color: white;
   padding: 15px 20px;
   display: flex;
@@ -14,7 +14,7 @@
 }
 
 .step-badge{
-  background: #38bdf8;
+  background: #0ea5e9;
   color: #0f172a;
   border-radius: 50%;
   width: 26px;
@@ -38,7 +38,7 @@
 }
 
 .balance-card{
-  background: linear-gradient(135deg, #0f172a 0%, #253968 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
   color: white;
   padding: 20px;
   border-radius: 15px;
@@ -90,7 +90,7 @@
 .icon-box{
   width: 42px;
   height: 42px;
-  background: #88bddb;
+  background: #93c5fd;
   border-radius: 10px;
   display: flex;
   align-items: center;

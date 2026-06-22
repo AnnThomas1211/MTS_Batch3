@@ -29,7 +29,7 @@
 }
 
 .profile-header {
-  background: linear-gradient(90deg, #0f172a, #1e293b);
+  background: linear-gradient(90deg, #1e3a8a, #2563eb);
   color: white;
   padding: 15px 20px;
   display: flex;
@@ -38,7 +38,7 @@
 }
 
 .step-badge {
-  background: #38bdf8;
+  background: #0ea5e9;
   color: #0f172a;
   border-radius: 50%;
   width: 26px;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TransferService } from '../../service/transfer-service';
@@ -31,7 +31,8 @@ export class TransferComponent {
     private transferService: TransferService,
     private router: Router,
     private accountService: AccountService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
     const accountId = this.authService.getAccountId();
     this.transferForm = this.fb.group({
@@ -77,6 +78,8 @@ export class TransferComponent {
         next: (response: TransferResponse) => {
           this.success = response.status === 'SUCCESS';
           this.resultMessage = response.message;
+          // Zoneless app: notify change detection so the result renders now.
+          this.cdr.markForCheck();
           if (this.success) {
             this.accountService.refreshAccount(request.fromAccountId);
             this.router.navigate(['/']);
@@ -84,7 +87,11 @@ export class TransferComponent {
         },
 
         error: (err: any) => {
-          this.showErrorToast(err.message || 'Transfer failed. Please try again.');
+          // Prefer the backend's specific message (e.g. insufficient balance,
+          // account not active) over Angular's generic HTTP error text.
+          const message =
+            err?.error?.message || err?.message || 'Transfer failed. Please try again.';
+          this.showErrorToast(message);
         },
       });
     }
@@ -111,9 +118,13 @@ export class TransferComponent {
 
   showErrorToast(message: string): void {
     this.errorToast = message;
+    // Render the toast immediately (may be called from an async HTTP callback).
+    this.cdr.markForCheck();
     clearTimeout(this.toastTimeout);
     this.toastTimeout = setTimeout(() => {
       this.errorToast = null;
+      // Auto-dismiss also runs outside any event, so notify CD again.
+      this.cdr.markForCheck();
     }, 5000);
   }
 

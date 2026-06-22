@@ -5,12 +5,17 @@ import { TransferComponent } from './components/transfer-component/transfer-comp
 import { HistoryComponent } from './components/history-component/history-component';
 import { ProfileComponent } from './components/profile-component/profile-component';
 import { LoginComponent } from './components/login-component/login-component';
+import { RegisterComponent } from './components/register-component/register-component';
 import { AuthGuard } from './guards/auth-guard';
 
 const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
   },
   {
     path: 'transfer',

@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles — professional theme */
+:root {
+  --brand-dark: #1e3a8a;
+  --brand: #2563eb;
+  --brand-accent: #0ea5e9;
+  --surface: #f1f5fb;
+  --text: #0f172a;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--surface);
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--brand);
+}

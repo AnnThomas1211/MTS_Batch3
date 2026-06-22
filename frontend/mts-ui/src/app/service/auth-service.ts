@@ -1,13 +1,17 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Account } from '../models/account';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
+  private readonly URL = 'http://localhost:8080/api/v1/accounts';
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'auth_user';
   private readonly ACCOUNT_ID_KEY = 'account_id';
@@ -17,6 +21,7 @@ export class AuthService {
   isLoggedIn$;
 
   constructor(
+    private http: HttpClient,
     private router: Router,
     @Inject(PLATFORM_ID) platformId: Object,
   ) {
@@ -25,11 +30,36 @@ export class AuthService {
     this.isLoggedIn$ = this.loggedIn.asObservable();
   }
 
-  login(username: string, password: string, accountId: number): void {
-    const token = btoa(`${username}:${password}`);
+  /**
+   * Validates the credentials against the backend. The session is only
+   * established (token + account stored, logged-in state emitted) if the
+   * backend confirms the account id + password. Callers should navigate only
+   * after this observable emits successfully.
+   */
+  login(accountId: number, password: string): Observable<Account> {
+    return this.http
+      .post<Account>(`${this.URL}/login`, { accountId, password })
+      .pipe(
+        tap((account) => this.establishSession(account, accountId, password))
+      );
+  }
+
+  /**
+   * Registers a new account from a holder name + password. The backend assigns
+   * the account id, which is returned in the response so the user knows the id
+   * they will sign in with. No session is established here.
+   */
+  register(holderName: string, password: string): Observable<Account> {
+    return this.http.post<Account>(`${this.URL}/register`, { holderName, password });
+  }
+
+  private establishSession(account: Account, accountId: number, password: string): void {
+    // HTTP Basic credentials for subsequent requests are accountId:password,
+    // matched against the per-account BCrypt hash on the backend.
+    const token = btoa(`${accountId}:${password}`);
     if (this.isBrowser) {
       localStorage.setItem(this.TOKEN_KEY, token);
-      localStorage.setItem(this.USER_KEY, username);
+      localStorage.setItem(this.USER_KEY, account.holderName ?? '');
       localStorage.setItem(this.ACCOUNT_ID_KEY, accountId.toString());
     }
     this.loggedIn.next(true);

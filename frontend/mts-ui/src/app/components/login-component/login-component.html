@@ -1,3 +1,15 @@
+<!-- Popup shown right after a successful registration -->
+<div class="popup-overlay" *ngIf="registeredAccountId !== null">
+  <div class="popup-card">
+    <div class="popup-icon">✓</div>
+    <h3>Account created!</h3>
+    <p>Your Account ID is</p>
+    <div class="popup-account-id">{{ registeredAccountId }}</div>
+    <p class="popup-note">Please note it down — you'll use it to sign in.</p>
+    <button type="button" class="popup-btn" (click)="dismissPopup()">Got it</button>
+  </div>
+</div>
+
 <div class="login-container">
   <div class="login-card">
     <h2>Money Transfer System</h2>
@@ -5,15 +17,19 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="accountId">Account ID</label>
         <input
-          id="username"
-          type="text"
-          formControlName="username"
-          placeholder="Enter your username"
+          id="accountId"
+          type="number"
+          formControlName="accountId"
+          placeholder="Enter your account ID"
+          autocomplete="username"
         />
-        <span class="error" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid">
-          Username is required.
+        <span class="error" *ngIf="loginForm.get('accountId')?.touched && loginForm.get('accountId')?.errors?.['required']">
+          Account ID is required.
+        </span>
+        <span class="error" *ngIf="loginForm.get('accountId')?.touched && loginForm.get('accountId')?.errors?.['min']">
+          Account ID must be a positive number.
         </span>
       </div>
 
@@ -24,22 +40,10 @@
           type="password"
           formControlName="password"
           placeholder="Enter your password"
+          autocomplete="current-password"
         />
-        <span class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+        <span class="error" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
           Password is required.
-        </span>
-      </div>
-
-      <div class="form-group">
-        <label for="accountId">Account ID</label>
-        <input
-          id="accountId"
-          type="number"
-          formControlName="accountId"
-          placeholder="Enter your account ID"
-        />
-        <span class="error" *ngIf="loginForm.get('accountId')?.touched && loginForm.get('accountId')?.invalid">
-          A valid Account ID is required.
         </span>
       </div>
 
@@ -47,7 +51,14 @@
         {{ errorMessage }}
       </div>
 
-      <button type="submit" [disabled]="loginForm.invalid">Sign In</button>
+      <button type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Signing in...' : 'Sign In' }}
+      </button>
+
+      <p class="switch-auth">
+        Don't have an account?
+        <a routerLink="/register">Register</a>
+      </p>
     </form>
   </div>
 </div>

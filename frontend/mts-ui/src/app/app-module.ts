@@ -4,6 +4,7 @@ import { BrowserModule, provideClientHydration, withEventReplay } from '@angular
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { LoginComponent } from './components/login-component/login-component';
+import { RegisterComponent } from './components/register-component/register-component';
 import { DashboardComponent } from './components/dashboard-component/dashboard-component';
 import { HistoryComponent } from './components/history-component/history-component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ import { TopNavbarComponent } from './components/top-navbar-component/top-navbar
     App,
     TopNavbarComponent,
     LoginComponent,
+    RegisterComponent,
     DashboardComponent,
     HistoryComponent,
     ProfileComponent,

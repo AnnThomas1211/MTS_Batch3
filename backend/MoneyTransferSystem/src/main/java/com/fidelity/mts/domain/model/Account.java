@@ -38,6 +38,11 @@ public class Account {
 	@Column(name = "last_updated")
 	private LocalDateTime lastUpdated;
 
+	// BCrypt-hashed login password for this account. Nullable so existing rows
+	// upgrade cleanly via ddl-auto=update; a startup seeder backfills any nulls.
+	@Column(name = "password_hash", length = 100)
+	private String passwordHash;
+
 	public Account() {
 		
 	}
@@ -114,6 +119,12 @@ public class Account {
 	}
 	public void setLastUpdated(LocalDateTime lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
 	}
 
 	
