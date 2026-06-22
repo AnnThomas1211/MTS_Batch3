@@ -21,6 +21,9 @@ export class TransferComponent {
   success: boolean | null = null;
   errorToast: string | null = null;
 
+  // ADDED: State to control modal visibility
+  showModal: boolean = false;
+
   private toastTimeout: any;
 
   constructor(
@@ -42,6 +45,25 @@ export class TransferComponent {
     return crypto.randomUUID();
   }
 
+  // ADDED: Intercepts the form submission to show the modal first
+  openConfirmation(): void {
+    if (this.transferForm.valid) {
+      this.showModal = true;
+    }
+  }
+
+  // ADDED: Closes the modal safely if they opt out
+  closeConfirmation(): void {
+    this.showModal = false;
+  }
+
+  // ADDED: Triggered when user clicks "Confirm & Send" inside the popup modal
+  confirmAndSubmit(): void {
+    this.closeConfirmation();
+    this.submitTransfer();
+  }
+
+  // MODIFIED: Kept private to this class context or called by confirmAndSubmit
   submitTransfer(): void {
     if (this.transferForm.valid) {
       const request: TransferRequest = {
@@ -86,6 +108,7 @@ export class TransferComponent {
   goToHistory(): void {
     this.router.navigate(['/history']);
   }
+
   showErrorToast(message: string): void {
     this.errorToast = message;
     clearTimeout(this.toastTimeout);
