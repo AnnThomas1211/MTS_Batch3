@@ -4,6 +4,6 @@ package com.fidelity.mts.domain.exception;
 public class InvalidCredentialsException extends RuntimeException {
 
     public InvalidCredentialsException() {
-        super("Incorrect email or password");
+        super("Invalid email or password.");
     }
 }

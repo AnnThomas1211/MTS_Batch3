@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePay - System Architecture & Rewards Module</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Mermaid JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            flowchart: {
+                nodeSpacing: 25,
+                rankSpacing: 35,
+                curve: 'linear'
+            }
+        });
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #F3F5F6;
+            /* Mist */
+            --bg-secondary: #E9ECEF;
+            --card-bg: #FFFFFF;
+            /* White */
+            --card-border: #D4C5B3;
+            /* Sand */
+            --accent-green: #005A2B;
+            /* Fidelity Green */
+            --accent-sand: #CDBEAB;
+            /* Sand */
+            --accent-blue: #025FA4;
+            /* Blue Accent */
+            --accent-red: #D32F2F;
+            /* Red Accent */
+            --text-main: #1A1A1A;
+            /* Dark Charcoal */
+            --text-muted: #4A5568;
+            /* Slate Gray */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(0, 90, 43, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(205, 190, 171, 0.05) 0%, transparent 40%);
+        }
+
+        header {
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-sand);
+            background: var(--accent-green);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "🟢";
+            font-size: 1.1rem;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: #FFFFFF;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.25rem 0.85rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.02em;
+        }
+
+        /* Slide Container and Slides */
+        .presentation-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 3rem;
+        }
+
+        .slide {
+            position: absolute;
+            width: calc(100% - 6rem);
+            height: calc(100% - 3rem);
+            max-width: 1350px;
+            max-height: 680px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-top: 5px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            opacity: 0;
+            transform: scale(0.98);
+            pointer-events: none;
+            transition: all 0.4s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            /* Prevent vertical scroll completely */
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        /* Slide Content Styling */
+        .slide-header {
+            margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--bg-secondary);
+            padding-bottom: 0.75rem;
+        }
+
+        .slide-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .slide-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-green);
+            background: rgba(0, 90, 43, 0.08);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
+            align-items: center;
+            flex-grow: 1;
+            min-height: 0;
+            /* Important to keep children bounds inside slide */
+        }
+
+        .slide-pane {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            min-height: 0;
+        }
+
+        /* Features List */
+        .feature-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--bg-secondary);
+            border-radius: 10px;
+            padding: 0.85rem 1.15rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            gap: 0.85rem;
+            align-items: flex-start;
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-sand);
+            transform: translateX(3px);
+        }
+
+        .feature-icon {
+            font-size: 1.35rem;
+            line-height: 1;
+            padding: 0.4rem;
+            background: #ffffff;
+            border-radius: 6px;
+            border: 1px solid var(--bg-secondary);
+        }
+
+        .feature-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.15rem;
+        }
+
+        .feature-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        /* Badge Matrix */
+        .tech-matrix {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .tech-box {
+            background: #ffffff;
+            border: 1px solid var(--bg-secondary);
+            padding: 0.85rem 1.15rem;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .tech-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .tech-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .tech-badge {
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-main);
+            width: fit-content;
+            border: 1px solid var(--bg-secondary);
+        }
+
+        /* Interactive Architecture Viewport */
+        .arch-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            gap: 0.75rem;
+        }
+
+        .arch-toggle-bar {
+            display: flex;
+            background: var(--bg-primary);
+            border: 1px solid var(--card-border);
+            padding: 0.2rem;
+            border-radius: 9999px;
+            width: fit-content;
+        }
+
+        .arch-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.4rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .arch-btn.active {
+            background: var(--accent-green);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 90, 43, 0.15);
+        }
+
+        .diagram-viewport {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 0.5rem;
+            min-height: 0;
+        }
+
+        #diagram-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Override SVG styles to make rendered diagrams highly readable */
+        .diagram-viewport svg {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            height: auto !important;
+        }
+
+        .diagram-viewport svg .node rect,
+        .diagram-viewport svg .node circle,
+        .diagram-viewport svg .node polygon {
+            stroke-width: 2px !important;
+        }
+
+        .diagram-viewport svg .node text {
+            font-size: 15px !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 700 !important;
+            fill: #1A1A1A !important;
+        }
+
+        .diagram-viewport svg .edgePath .path {
+            stroke-width: 2px !important;
+        }
+
+        .diagram-viewport svg .edgeLabel text {
+            font-size: 12px !important;
+            fill: var(--text-main) !important;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 600 !important;
+        }
+
+        .legend-indicator {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            display: flex;
+            gap: 0.5rem;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.rewards {
+            background-color: var(--accent-green);
+            border: 1.5px solid var(--accent-green);
+            box-shadow: 0 0 6px var(--accent-green);
+        }
+
+        /* Slide 3 Specific: Reward Rules Layout */
+        .rule-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .rule-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--bg-secondary);
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .rule-card.active-rule {
+            border-left: 4px solid var(--accent-green);
+            background: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .rule-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .rule-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        .calculation-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.25rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .math-expr {
+            font-family: 'JetBrains Mono', monospace;
+            background: #ffffff;
+            padding: 0.65rem;
+            border-radius: 6px;
+            border: 1px solid var(--card-border);
+            margin: 0.75rem 0;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            text-align: center;
+        }
+
+        .example-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--bg-secondary);
+            padding: 0.45rem 0;
+            font-size: 0.75rem;
+        }
+
+        .example-box:last-child {
+            border: none;
+        }
+
+        .example-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Navigation Controls */
+        footer {
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--card-border);
+            background: #ffffff;
+            z-index: 10;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        .nav-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            border-color: var(--accent-sand);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
+        .slide-indicators {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0, 90, 43, 0.15);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .indicator.active {
+            background: var(--accent-green);
+            transform: scale(1.2);
+            box-shadow: 0 0 6px rgba(0, 90, 43, 0.3);
+        }
+
+        .indicator:hover {
+            background: rgba(0, 90, 43, 0.3);
+        }
+
+        .keyboard-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-weight: 500;
+        }
+
+        .key-badge {
+            background: var(--bg-primary);
+            border: 1px solid var(--card-border);
+            border-radius: 4px;
+            padding: 0.05rem 0.3rem;
+            font-family: monospace;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">SecurePay</div>
+        <div class="subtitle">System Architecture Review</div>
+    </header>
+
+    <div class="presentation-container">
+
+        <!-- SLIDE 1: Core System & Tech Stack -->
+        <div class="slide active" id="slide-1">
+            <div class="slide-header">
+                <span class="slide-title">System Overview & Technological Stack</span>
+                <span class="slide-tag">Stack Verify</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="slide-pane">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: var(--accent-blue);">🔑</div>
+                        <div>
+                            <h4 class="feature-title">Stateless Authentication (JWT)</h4>
+                            <p class="feature-desc">Secured via JSON Web Tokens for stateless access validation.
+                                Integrated cleanly with Spring Security.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: var(--accent-green);">💾</div>
+                        <div>
+                            <h4 class="feature-title">Data Access (Spring Data JPA)</h4>
+                            <p class="feature-desc">Engineered strictly around JpaRepository with automatic Hibernate
+                                mapping. No explicit JDBC queries used.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: var(--accent-sand);">📦</div>
+                        <div>
+                            <h4 class="feature-title">Angular Standalone UI</h4>
+                            <p class="feature-desc">Modern modularization without traditional NgModules. Built entirely
+                                with Standalone components and lazy routes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-pane">
+                    <div class="tech-matrix">
+                        <div class="tech-box">
+                            <span class="tech-label">Auth Library</span>
+                            <span class="tech-val">JWT Stateless</span>
+                            <span class="tech-badge"
+                                style="color: var(--accent-blue); background: rgba(2, 95, 164, 0.08);">jjwt-api</span>
+                        </div>
+                        <div class="tech-box">
+                            <span class="tech-label">ORM Layer</span>
+                            <span class="tech-val">Spring JPA</span>
+                            <span class="tech-badge"
+                                style="color: var(--accent-green); background: rgba(0, 90, 43, 0.08);">Hibernate</span>
+                        </div>
+                        <div class="tech-box">
+                            <span class="tech-label">Frontend Structure</span>
+                            <span class="tech-val">Angular 18+</span>
+                            <span class="tech-badge" style="color: var(--text-main);">Standalone</span>
+                        </div>
+                        <div class="tech-box">
+                            <span class="tech-label">Concurrency</span>
+                            <span class="tech-val">Optimistic Lock</span>
+                            <span class="tech-badge"
+                                style="color: var(--accent-red); background: rgba(211, 47, 47, 0.08);">@Version</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Interactive System Architecture (Draw.io ready) -->
+        <div class="slide" id="slide-2">
+            <div class="slide-header">
+                <span class="slide-title">System Architecture</span>
+                <div class="arch-toggle-bar">
+                    <button class="arch-btn active" id="btn-old-arch" onclick="changeArchitecture('old')">Old Core
+                        System</button>
+                    <button class="arch-btn" id="btn-new-arch" onclick="changeArchitecture('new')">New (Rewards
+                        Integrated)</button>
+                </div>
+            </div>
+
+            <div class="arch-container">
+                <div class="diagram-viewport">
+                    <div id="diagram-container" class="mermaid">
+                        <!-- Mermaid text is dynamically injected here -->
+                    </div>
+                    <div class="legend-indicator" id="rewards-legend" style="display: none;">
+                        <div class="legend-item">
+                            <div class="legend-dot rewards"></div>
+                            <span>New Rewards Module Components</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Reward Module Business Logic -->
+        <div class="slide" id="slide-3">
+            <div class="slide-header">
+                <span class="slide-title">Reward Module: Eligibility & Calculation Rules</span>
+                <span class="slide-tag">Business Rules</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="slide-pane" style="justify-content: flex-start;">
+                    <div class="rule-grid">
+                        <div class="rule-card active-rule">
+                            <h4 class="rule-title">🟢 Successful Transfer</h4>
+                            <p class="rule-desc">Transaction status must be SUCCESS to qualify for point allocation.</p>
+                        </div>
+                        <div class="rule-card active-rule">
+                            <h4 class="rule-title">🟢 Amount &ge; $100</h4>
+                            <p class="rule-desc">Only transactions of $100 or more are eligible to earn reward points.
+                            </p>
+                        </div>
+                        <div class="rule-card active-rule">
+                            <h4 class="rule-title">🟢 Peer-to-Peer</h4>
+                            <p class="rule-desc">Sender and receiver must be different users (cross-user transaction).
+                            </p>
+                        </div>
+                        <div class="rule-card active-rule">
+                            <h4 class="rule-title">🟢 No Self-Transfers</h4>
+                            <p class="rule-desc">Transfers between accounts owned by the same user are disqualified.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-pane">
+                    <div class="calculation-card">
+                        <div>
+                            <h4 class="feature-title" style="color: var(--accent-green);">Calculation Logic</h4>
+                            <p class="feature-desc" style="font-size: 0.75rem;">1 point for every $100 transferred,
+                                rounded down (using integer division). Integrated safely inside database transactions.
+                            </p>
+
+                            <div class="math-expr">
+                                points = floor(Amount / 100)
+                            </div>
+                        </div>
+
+                        <div
+                            style="background: #ffffff; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--bg-secondary);">
+                            <div class="example-box">
+                                <span>Transfer of $250.00</span>
+                                <span class="example-val" style="color: var(--accent-green);">+2 Points</span>
+                            </div>
+                            <div class="example-box">
+                                <span>Transfer of $99.00</span>
+                                <span class="example-val" style="color: var(--text-muted);">0 Points (Amount <
+                                        100)</span>
+                            </div>
+                            <div class="example-box">
+                                <span>Transfer of $100 (Self)</span>
+                                <span class="example-val" style="color: var(--accent-red);">0 Points
+                                    (Disqualified)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Angular Frontend Modular Integration -->
+        <div class="slide" id="slide-4">
+            <div class="slide-header">
+                <span class="slide-title">Angular Standalone Frontend Integration</span>
+                <span class="slide-tag">Angular Architecture</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="slide-pane">
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: var(--accent-blue);">🧱</div>
+                        <div>
+                            <h4 class="feature-title">Standalone Feature Component</h4>
+                            <p class="feature-desc"><code>RewardsComponent</code> utilizes Standalone APIs, directly
+                                importing its card, badge, and table primitives from Spartan UI.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: var(--accent-green);">🔌</div>
+                        <div>
+                            <h4 class="feature-title">Extended ApiService</h4>
+                            <p class="feature-desc">Integrated secure endpoints: <code>getRewardSummary()</code> and
+                                <code>getRewardHistory()</code> relying on global JWT injection.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon" style="color: var(--accent-sand);">🔀</div>
+                        <div>
+                            <h4 class="feature-title">Lazy Route Mapping</h4>
+                            <p class="feature-desc">Registered with dynamic lazy loading in <code>app.routes.ts</code>
+                                under route protection (AuthGuard).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-pane" style="justify-content: center;">
+                    <div
+                        style="background: var(--bg-primary); border: 1px solid var(--card-border); padding: 1.25rem; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; overflow: hidden; line-height: 1.4;">
+                        <span style="color: #718096;">// app.routes.ts - Lazy Loading Route</span><br>
+                        <span style="color: var(--accent-blue);">export const</span> <span
+                            style="color: var(--text-main);">routes: Routes = [</span><br>
+                        &nbsp;&nbsp;<span style="color: var(--text-main);">{</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--accent-green);">path</span><span
+                            style="color: var(--text-main);">:</span> <span
+                            style="color: var(--accent-red);">'rewards'</span><span
+                            style="color: var(--text-main);">,</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--accent-green);">loadComponent</span><span
+                            style="color: var(--text-main);">: () =></span> <span
+                            style="color: var(--text-main);">import(</span><span
+                            style="color: var(--accent-red);">'./rewards.component'</span><span
+                            style="color: var(--text-main);">)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--text-main);">.then(m =>
+                            m.RewardsComponent),</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: var(--accent-green);">canActivate</span><span
+                            style="color: var(--text-main);">: [AuthGuard]</span><br>
+                        &nbsp;&nbsp;<span style="color: var(--text-main);">}</span><br>
+                        <span style="color: var(--text-main);">];</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <button class="nav-btn" id="prev-btn" onclick="navigateSlide(-1)" disabled>
+            &larr; Previous
+        </button>
+
+        <div class="slide-indicators">
+            <div class="indicator active" onclick="jumpToSlide(1)"></div>
+            <div class="indicator" onclick="jumpToSlide(2)"></div>
+            <div class="indicator" onclick="jumpToSlide(3)"></div>
+            <div class="indicator" onclick="jumpToSlide(4)"></div>
+        </div>
+
+        <div class="keyboard-hint">
+            <span>Use</span>
+            <span class="key-badge">&larr;</span>
+            <span class="key-badge">&rarr;</span>
+            <span>to navigate slides</span>
+        </div>
+
+        <button class="nav-btn" id="next-btn" onclick="navigateSlide(1)">
+            Next &rarr;
+        </button>
+    </footer>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 4;
+
+        // Mermaid Code Definitions (Horizontal LR layout for compact spacing)
+        const oldArchitectureCode = `
+graph LR
+    classDef client fill:#ffffff,stroke:#025FA4,stroke-width:2px,color:#1a1a1a;
+    classDef api fill:#ffffff,stroke:#005A2B,stroke-width:2px,color:#1a1a1a;
+    classDef db fill:#ffffff,stroke:#D32F2F,stroke-width:2px,color:#1a1a1a;
+
+    subgraph FE [Angular Frontend]
+        login[LoginComponent]
+        dash[DashboardComponent]
+        transfer[TransferComponent]
+        history[HistoryComponent]
+    end
+    class FE,login,dash,transfer,history client;
+
+    subgraph BE [Spring Boot Backend]
+        jwt[JwtAuthFilter]
+        auth[AuthController]
+        acc[AccountController]
+        tx[TransferController]
+    end
+    class BE,jwt,auth,acc,tx api;
+
+    subgraph DB [MySQL Database]
+        uTbl[(users table)]
+        aTbl[(accounts table)]
+        lTbl[(transaction_logs)]
+    end
+    class DB,uTbl,aTbl,lTbl db;
+
+    FE -- "REST + JWT" --> jwt
+    jwt --> auth & acc & tx
+    auth --> uTbl
+    acc --> aTbl
+    tx --> aTbl & lTbl
+        `;
+
+        const newArchitectureCode = `
+graph LR
+    classDef client fill:#ffffff,stroke:#025FA4,stroke-width:2px,color:#1a1a1a;
+    classDef api fill:#ffffff,stroke:#005A2B,stroke-width:2px,color:#1a1a1a;
+    classDef db fill:#ffffff,stroke:#D32F2F,stroke-width:2px,color:#1a1a1a;
+    classDef rewards fill:#E8F5E9,stroke:#005A2B,stroke-width:3px,color:#005A2B;
+
+    subgraph FE [Angular Frontend]
+        login[LoginComponent]
+        dash[DashboardComponent]
+        transfer[TransferComponent]
+        history[HistoryComponent]
+        rewardsComp[RewardsComponent]
+    end
+    class FE,login,dash,transfer,history client;
+    class rewardsComp rewards;
+
+    subgraph BE [Spring Boot Backend]
+        jwt[JwtAuthFilter]
+        auth[AuthController]
+        acc[AccountController]
+        tx[TransferController]
+        rewardCtrl[RewardController]
+    end
+    class BE,jwt,auth,acc,tx api;
+    class rewardCtrl rewards;
+
+    subgraph DB [MySQL Database]
+        uTbl[(users table)]
+        aTbl[(accounts table)]
+        lTbl[(transaction_logs)]
+        rTbl[(reward_history)]
+    end
+    class DB,uTbl,aTbl,lTbl db;
+    class rTbl rewards;
+
+    FE -- "REST + JWT" --> jwt
+    jwt --> auth & acc & tx & rewardCtrl
+    auth --> uTbl
+    acc --> aTbl
+    tx -- "Triggers Reward" --> rewardCtrl
+    tx --> aTbl & lTbl
+    rewardCtrl --> rTbl
+        `;
+
+        let currentArch = 'old';
+
+        async function drawDiagram(code) {
+            const container = document.getElementById('diagram-container');
+            container.removeAttribute('data-processed');
+            container.innerHTML = code;
+            try {
+                await mermaid.run({
+                    nodes: [container]
+                });
+            } catch (err) {
+                console.error("Mermaid Render Error: ", err);
+            }
+        }
+
+        function changeArchitecture(type) {
+            if (currentArch === type) return;
+            currentArch = type;
+
+            const btnOld = document.getElementById('btn-old-arch');
+            const btnNew = document.getElementById('btn-new-arch');
+            const rewardsLegend = document.getElementById('rewards-legend');
+
+            if (type === 'old') {
+                btnOld.classList.add('active');
+                btnNew.classList.remove('active');
+                rewardsLegend.style.display = 'none';
+                drawDiagram(oldArchitectureCode);
+            } else {
+                btnNew.classList.add('active');
+                btnOld.classList.remove('active');
+                rewardsLegend.style.display = 'flex';
+                drawDiagram(newArchitectureCode);
+            }
+        }
+
+        function updateSlideUI() {
+            // Update slides visibility
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                if (i === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            }
+
+            // Update indicators
+            const indicators = document.querySelectorAll('.indicator');
+            indicators.forEach((ind, index) => {
+                if (index + 1 === currentSlide) {
+                    ind.classList.add('active');
+                } else {
+                    ind.classList.remove('active');
+                }
+            });
+
+            // Update navigation button states
+            document.getElementById('prev-btn').disabled = (currentSlide === 1);
+            document.getElementById('next-btn').disabled = (currentSlide === totalSlides);
+
+            // Re-render Mermaid if slide 2 becomes active
+            if (currentSlide === 2) {
+                setTimeout(() => {
+                    drawDiagram(currentArch === 'old' ? oldArchitectureCode : newArchitectureCode);
+                }, 50);
+            }
+        }
+
+        function navigateSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 1) currentSlide = 1;
+            if (currentSlide > totalSlides) currentSlide = totalSlides;
+            updateSlideUI();
+        }
+
+        function jumpToSlide(num) {
+            currentSlide = num;
+            updateSlideUI();
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                if (currentSlide < totalSlides) {
+                    navigateSlide(1);
+                }
+            } else if (e.key === 'ArrowLeft') {
+                if (currentSlide > 1) {
+                    navigateSlide(-1);
+                }
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateSlideUI();
+        });
+    </script>
+
+</body>
+
+</html>

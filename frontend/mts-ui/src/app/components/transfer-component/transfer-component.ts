@@ -44,8 +44,9 @@ export class TransferComponent implements OnInit, OnDestroy {
     const displayDetails = username ? `${username} (Account #${accountId})` : `${accountId}`;
 
     this.transferForm = this.fb.group({
-      fromAccountId: [{value: displayDetails, disabled: true}],
+      fromAccountId: [{ value: displayDetails, disabled: true }],
       toAccountId: ['', Validators.required],
+      // ensures that atleast 0.01 is put as the amount
       amount: ['', [Validators.required, Validators.min(0.01)]],
     });
   }
@@ -67,11 +68,14 @@ export class TransferComponent implements OnInit, OnDestroy {
     this.toAccountSub = this.transferForm.get('toAccountId')?.valueChanges.pipe(
       debounceTime(400),
       distinctUntilChanged(),
+      //ensures that if a new value comes in, the existing req is cancelled and a new one is created
+      // get call for recipient name
       switchMap(val => {
         const id = Number(val);
         if (id && !isNaN(id) && id > 0) {
           if (id === this.authService.getAccountId()) {
             this.recipientName = 'Cannot transfer to yourself';
+            //return observable null
             return of(null);
           }
           return this.accountService.getAccount(id).pipe(
@@ -127,7 +131,7 @@ export class TransferComponent implements OnInit, OnDestroy {
             this.accountService.refreshAccount(request.fromAccountId);
             this.showSuccessAlert = true;
             this.cdr.detectChanges();
-            
+
             // Navigate after 3 seconds
             this.redirectTimeout = setTimeout(() => {
               this.router.navigate(['/dashboard']);

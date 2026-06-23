@@ -26,6 +26,10 @@ export class AuthService {
     this.isLoggedIn$ = this.loggedIn.asObservable();
   }
 
+  /**
+   * Used for legacy Admin Login (from /admin-login, using the LoginComponent).
+   * Encodes the provided admin username/password for Basic Auth.
+   */
   login(username: string, password: string, accountId: number): void {
     const token = btoa(`${username}:${password}`);
     if (this.isBrowser) {

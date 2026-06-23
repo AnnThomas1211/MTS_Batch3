@@ -45,4 +45,4 @@ import { RouterModule } from '@angular/router';
   ],
   bootstrap: [App],
 })
-export class AppModule {}
+export class AppModule { }

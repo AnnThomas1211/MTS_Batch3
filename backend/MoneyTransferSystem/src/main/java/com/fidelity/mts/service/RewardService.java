@@ -57,11 +57,6 @@ public class RewardService implements RewardServiceInterface {
     }
 
     @Override
-    public int getRewardBalance(long accountId) {
-        return rewardLedgerRepository.sumPointsByAccountId(accountId);
-    }
-
-    @Override
     public List<RewardLedger> getRewardHistory(long accountId) {
         return rewardLedgerRepository.findByAccountIdOrderByCreatedAtDesc(accountId);
     }

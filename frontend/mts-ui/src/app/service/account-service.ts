@@ -13,7 +13,7 @@ export class AccountService {
   private accountCache = new Map<number, Observable<Account>>();
   private accountDataCache = new Map<number, Account>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAccount(id: number) {
     return this.http.get<Account>(`${this.URL}/${id}`)

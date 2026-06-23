@@ -11,10 +11,10 @@
     <!-- Centered Transfer Card -->
     <div class="col-lg-6 col-md-8">
       <div class="card border-0 shadow-sm p-4 rounded-4 bg-white">
-        
+
         <!-- Live Available Balance Banner -->
-        <div class="d-flex justify-content-between align-items-center mb-4 p-3 rounded-3" 
-             style="background-color: #f8fafc; border: 1px solid #e2e8f0;">
+        <div class="d-flex justify-content-between align-items-center mb-4 p-3 rounded-3"
+          style="background-color: #f8fafc; border: 1px solid #e2e8f0;">
           <span class="text-muted fw-semibold small text-uppercase">Available Balance</span>
           <span class="fs-5 fw-bold text-dark">
             {{ availableBalance !== null ? '$' + (availableBalance | number:'1.2-2') : 'Loading...' }}
@@ -24,39 +24,27 @@
         <form [formGroup]="transferForm" (ngSubmit)="submitTransfer()">
           <!-- From Account (Read-only User Details) -->
           <div class="mb-4">
-            <label for="fromAccountId" class="form-label fw-semibold text-muted small text-uppercase">From Account</label>
-            <input
-              id="fromAccountId"
-              formControlName="fromAccountId"
-              class="form-control form-control-lg bg-light text-secondary"
-              type="text"
-              style="font-weight: 500;"
-            />
+            <label for="fromAccountId" class="form-label fw-semibold text-muted small text-uppercase">From
+              Account</label>
+            <input id="fromAccountId" formControlName="fromAccountId"
+              class="form-control form-control-lg bg-light text-secondary" type="text" style="font-weight: 500;" />
           </div>
 
           <!-- To Account (Recipient) -->
           <div class="mb-4">
             <label for="toAccountId" class="form-label fw-semibold text-muted small text-uppercase">To Account</label>
-            <input
-              id="toAccountId"
-              formControlName="toAccountId"
-              class="form-control form-control-lg"
-              type="text"
-              placeholder="Enter recipient account number"
-            />
+            <input id="toAccountId" formControlName="toAccountId" class="form-control form-control-lg" type="text"
+              placeholder="Enter recipient account number" />
             <!-- Recipient name lookup display -->
-            <div *ngIf="recipientName" 
-                 [ngClass]="{'text-success': recipientName !== 'Account not found' && recipientName !== 'Cannot transfer to yourself', 'text-danger': recipientName === 'Account not found' || recipientName === 'Cannot transfer to yourself'}"
-                 class="small mt-2 fw-semibold">
+            <div *ngIf="recipientName"
+              [ngClass]="{'text-success': recipientName !== 'Account not found' && recipientName !== 'Cannot transfer to yourself', 'text-danger': recipientName === 'Account not found' || recipientName === 'Cannot transfer to yourself'}"
+              class="small mt-2 fw-semibold">
               {{ recipientName }}
             </div>
-            <div
-              *ngIf="
+            <div *ngIf="
                 transferForm.get('toAccountId')?.invalid &&
                 transferForm.get('toAccountId')?.touched
-              "
-              class="text-danger small mt-2"
-            >
+              " class="text-danger small mt-2">
               Destination account is required
             </div>
           </div>
@@ -66,43 +54,28 @@
             <label for="amount" class="form-label fw-semibold text-muted small text-uppercase">Amount</label>
             <div class="input-group input-group-lg">
               <span class="input-group-text bg-white" style="color: #64748b; font-weight: bold;">$</span>
-              <input
-                id="amount"
-                type="number"
-                step="0.01;any"
-                min="0.01"
-                formControlName="amount"
-                class="form-control"
-                placeholder="0.00"
-              />
+              <input id="amount" type="number" step="0.01;any" min="0.01" formControlName="amount" class="form-control"
+                placeholder="0.00" />
             </div>
             <!-- Dynamic validation for exceeding balance -->
             <div *ngIf="availableBalance !== null && transferForm.get('amount')?.value > availableBalance"
-                 class="text-danger small mt-2 fw-semibold">
-              ⚠️ Warning: Amount exceeds your available balance of ${{ availableBalance | number:'1.2-2' }}.
+              class="text-danger small mt-2 fw-semibold">
+              Warning: Amount exceeds your available balance of ${{ availableBalance | number:'1.2-2' }}.
             </div>
-            <div
-              *ngIf="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched"
-              class="text-danger small mt-2"
-            >
+            <div *ngIf="transferForm.get('amount')?.invalid && transferForm.get('amount')?.touched"
+              class="text-danger small mt-2">
               Enter a valid amount (min $0.01)
             </div>
           </div>
 
           <div class="d-grid gap-3 d-sm-flex justify-content-sm-end mt-5">
-            <button
-              type="button"
-              (click)="cancel()"
-              class="btn btn-outline-secondary btn-lg px-4 rounded-3"
-            >
+            <button type="button" (click)="cancel()" class="btn btn-outline-secondary btn-lg px-4 rounded-3">
               Cancel
             </button>
-            <button
-              type="submit"
+            <button type="submit"
               [disabled]="!transferForm.valid || (availableBalance !== null && transferForm.get('amount')?.value > availableBalance)"
               class="btn btn-success btn-lg px-5 rounded-3 fw-semibold shadow-sm"
-              style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none;"
-            >
+              style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none;">
               Confirm & Transfer
             </button>
           </div>
@@ -114,18 +87,18 @@
         <div class="success-card shadow-lg p-5 text-center">
           <div class="success-icon-container mb-4">
             <svg class="checkmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-              <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-              <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+              <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
             </svg>
           </div>
           <h3 class="fw-bold text-dark mb-2">Transaction Successful!</h3>
           <p class="text-muted mb-4">{{ resultMessage || 'Your transfer was completed successfully.' }}</p>
-          
+
           <div class="spinner-border spinner-border-sm text-primary mb-3" role="status">
             <span class="visually-hidden">Loading...</span>
           </div>
           <p class="text-muted small mb-4">Redirecting to Dashboard in a few seconds...</p>
-          
+
           <button class="btn btn-primary px-4 py-2 fw-semibold rounded-3 shadow-sm" (click)="goToDashboard()">
             Go to Dashboard Now
           </button>

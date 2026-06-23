@@ -13,7 +13,7 @@ export class TransferService {
 
   private apiUrl = 'http://localhost:8080/api/v1/transfers'
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   transfer(request: TransferRequest): Observable<TransferResponse> {
     return this.http.post<TransferResponse>(this.apiUrl, request).pipe(
@@ -23,14 +23,14 @@ export class TransferService {
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An error occurred'
-    
+
     if (error.error instanceof ErrorEvent) {
       // Client-side error
       errorMessage = `Error: ${error.error.message}`
     } else {
       // Server-side error
       if (error.status === 403) {
-        errorMessage = 'You are not authorized to perform this transfer. Please check your account status.'
+        errorMessage = error.error?.message || 'Account is not active. Please check sender and recipient account status.'
       } else if (error.status === 400) {
         errorMessage = error.error?.message || 'Invalid request: Please check your input.'
       } else if (error.status === 404) {

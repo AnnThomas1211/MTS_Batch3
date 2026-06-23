@@ -22,9 +22,6 @@ public interface RewardServiceInterface {
      */
     void evaluateAndGrant(TransactionLog transaction);
 
-    /** Total accumulated reward points for an account. */
-    int getRewardBalance(long accountId);
-
     /** Full reward history for an account, newest first. */
     List<RewardLedger> getRewardHistory(long accountId);
 }

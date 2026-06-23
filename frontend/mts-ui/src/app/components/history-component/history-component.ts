@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./history-component.css'], // also corrected
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class HistoryComponent implements OnInit{
+export class HistoryComponent implements OnInit {
   transactions: TransactionLog[] = [];
   isLoading = true;
   errorMessage = '';
@@ -28,7 +28,7 @@ export class HistoryComponent implements OnInit{
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
@@ -54,13 +54,14 @@ export class HistoryComponent implements OnInit{
     });
   }
 
+  // whenever a filter is added, this automatically recalculates
   get filteredTransactions(): TransactionLog[] {
     return this.transactions.filter(t => {
       // 1. Status Filter
       if (this.statusFilter !== 'ALL' && t.status !== this.statusFilter) {
         return false;
       }
-      
+
       // 2. Recipient Search
       if (this.recipientSearch.trim()) {
         const query = this.recipientSearch.toLowerCase().trim();

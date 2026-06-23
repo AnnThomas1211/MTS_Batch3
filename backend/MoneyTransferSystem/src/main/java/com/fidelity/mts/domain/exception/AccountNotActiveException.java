@@ -6,7 +6,7 @@ public class AccountNotActiveException extends RuntimeException {
 //	 private final String accountId;
 
 	    public AccountNotActiveException(long accountId) {
-	        super("Account not active with ID: " + accountId);
+	        super("Locked Account : " + accountId);
 	    }
 
 

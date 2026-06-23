@@ -19,15 +19,19 @@
           </div>
 
           <!-- Reward Points Explanation Blob -->
-          <div class="rewards-info-blob mb-4 p-3 rounded-4 border" style="background-color: #f8fafc; border-color: #e2e8f0 !important;">
+          <div class="rewards-info-blob mb-4 p-3 rounded-4 border"
+            style="background-color: #f8fafc; border-color: #e2e8f0 !important;">
             <div class="d-flex align-items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill text-primary me-2 mt-1" viewBox="0 0 16 16">
-                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-info-circle-fill text-primary me-2 mt-1" viewBox="0 0 16 16">
+                <path
+                  d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
               </svg>
               <div>
                 <h6 class="fw-bold mb-1 text-dark" style="font-size: 0.9rem;">How to Earn Points</h6>
                 <p class="text-muted mb-0 small">
-                  Earn <strong>1 point for every $100</strong> transferred (rounded down) on any successful transfer to another account. 
+                  Earn <strong>1 point for every $100</strong> transferred (rounded down) on any successful transfer to
+                  another account.
                   A minimum transfer amount of <strong>$100</strong> is required to qualify.
                 </p>
               </div>
@@ -35,51 +39,51 @@
           </div>
 
           @if (isLoading()) {
-            <div class="text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-              <p class="text-muted mt-3 mb-0">Loading rewards...</p>
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
             </div>
+            <p class="text-muted mt-3 mb-0">Loading rewards...</p>
+          </div>
           } @else if (errorMessage()) {
-            <div class="alert alert-danger mb-0" role="alert">
-              {{ errorMessage() }}
-            </div>
+          <div class="alert alert-danger mb-0" role="alert">
+            {{ errorMessage() }}
+          </div>
           } @else if (rewards().length === 0) {
-            <div class="empty-state text-center py-5">
-              <p class="text-muted mb-2">No rewards found yet</p>
-              <p class="small text-muted mb-0">Make a transfer to start earning points.</p>
-            </div>
+          <div class="empty-state text-center py-5">
+            <p class="text-muted mb-2">No rewards found yet</p>
+            <p class="small text-muted mb-0">Make a transfer to start earning points.</p>
+          </div>
           } @else {
-            <div class="summary-card mb-4">
-              <div>
-                <p class="text-muted mb-1">Total rewards</p>
-                <h4 class="mb-0">{{ rewards().length }}</h4>
-              </div>
-              <div class="text-end">
-                <p class="text-muted mb-1">Total points</p>
-                <h4 class="mb-0 text-primary">{{ totalPoints() }}</h4>
-              </div>
+          <div class="summary-card mb-4">
+            <div>
+              <p class="text-muted mb-1">Number of reward earning transactions</p>
+              <h4 class="mb-0">{{ rewards().length }}</h4>
             </div>
-
-            <div class="reward-list">
-              @for (reward of rewards(); track reward.id) {
-                <article class="reward-card">
-                  <div class="reward-badge">
-                    <span>+{{ reward.pointsAwarded }}</span>
-                    <small>pts</small>
-                  </div>
-
-                  <div class="reward-body">
-                    <p class="reward-description mb-2">{{ reward.description }}</p>
-                    <div class="reward-meta">
-                      <span>Txn: {{ reward.transactionId }}</span>
-                      <span>{{ reward.createdAt | date: 'medium' }}</span>
-                    </div>
-                  </div>
-                </article>
-              }
+            <div class="text-end">
+              <p class="text-muted mb-1">Total reward points</p>
+              <h4 class="mb-0 text-primary">{{ totalPoints() }}</h4>
             </div>
+          </div>
+
+          <div class="reward-list">
+            @for (reward of rewards(); track reward.id) {
+            <article class="reward-card">
+              <div class="reward-badge">
+                <span>+{{ reward.pointsAwarded }}</span>
+                <small>pts</small>
+              </div>
+
+              <div class="reward-body">
+                <p class="reward-description mb-2">{{ reward.description }}</p>
+                <div class="reward-meta">
+                  <span>Txn: {{ reward.transactionId }}</span>
+                  <span>{{ reward.createdAt | date: 'medium' }}</span>
+                </div>
+              </div>
+            </article>
+            }
+          </div>
           }
         </div>
       </div>

@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Transfer System - System Architecture & Presentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- Mermaid JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            flowchart: {
+                nodeSpacing: 25,
+                rankSpacing: 35,
+                curve: 'linear'
+            }
+        });
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #EDEBE6;
+            --bg-secondary: #E4DFD5;
+            --card-bg: #FCFAF7;
+            --card-border: #CDBEAB;
+            --accent-green: #005A2B; /* Fidelity Green */
+            --accent-sand: #CDBEAB;
+            --accent-blue: #025FA4;
+            --accent-red: #D32F2F;
+            --text-main: #1A1A1A;
+            --text-muted: #4A5568;
+            --accent-sand-light: #FBF9F5;
+            --accent-sand-medium: #F5EFE4;
+            --accent-sand-dark: #8C7862;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(0, 90, 43, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(140, 120, 98, 0.1) 0%, transparent 50%);
+        }
+
+        header {
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent-sand);
+            background: var(--accent-green);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "🟢";
+            font-size: 1.35rem;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: #FFFFFF;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.35rem 1.15rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.02em;
+        }
+
+        /* Slide Container and Slides */
+        .presentation-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .slide {
+            position: absolute;
+            width: calc(100% - 3rem);
+            height: calc(100% - 1.5rem);
+            max-width: 1700px;
+            max-height: 88vh;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-top: 5px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 2rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            opacity: 0;
+            transform: scale(0.98);
+            pointer-events: none;
+            transition: all 0.4s ease-in-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        /* Slide Content Styling */
+        .slide-header {
+            margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--bg-secondary);
+            padding-bottom: 0.75rem;
+        }
+
+        .slide-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .slide-tag {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-green);
+            background: rgba(0, 90, 43, 0.08);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 3rem;
+            align-items: center;
+            flex-grow: 1;
+            min-height: 0;
+        }
+
+        .slide-pane {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            min-height: 0;
+        }
+
+        /* Features List */
+        .feature-card {
+            background: var(--accent-sand-light);
+            border: 1px solid var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            gap: 1.25rem;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-sand);
+            transform: translateX(5px);
+        }
+
+        .feature-icon {
+            font-size: 1.85rem;
+            line-height: 1;
+            padding: 0.65rem;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid var(--bg-secondary);
+        }
+
+        .feature-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+
+        .feature-desc {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Badge Matrix */
+        .tech-matrix {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .tech-box {
+            background: #ffffff;
+            border: 1px solid var(--bg-secondary);
+            padding: 1.5rem 1.75rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        .tech-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .tech-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .tech-badge {
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-main);
+            width: fit-content;
+            border: 1px solid var(--bg-secondary);
+        }
+
+        /* Interactive Architecture Viewport */
+        .arch-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            gap: 0.75rem;
+        }
+
+        .arch-toggle-bar {
+            display: flex;
+            background: var(--bg-primary);
+            border: 1px solid var(--card-border);
+            padding: 0.2rem;
+            border-radius: 9999px;
+            width: fit-content;
+        }
+
+        .arch-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.4rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .arch-btn.active {
+            background: var(--accent-green);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 90, 43, 0.15);
+        }
+
+        .diagram-viewport {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 0.5rem;
+            min-height: 0;
+        }
+
+        #diagram-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .diagram-viewport svg {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            height: auto !important;
+        }
+
+        .diagram-viewport svg .node rect,
+        .diagram-viewport svg .node circle,
+        .diagram-viewport svg .node polygon {
+            stroke-width: 2.5px !important;
+        }
+
+        .diagram-viewport svg .node text {
+            font-size: 17px !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 700 !important;
+            fill: #1A1A1A !important;
+        }
+
+        .diagram-viewport svg .edgePath .path {
+            stroke-width: 2.5px !important;
+        }
+
+        .diagram-viewport svg .edgeLabel text {
+            font-size: 14px !important;
+            fill: var(--text-main) !important;
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 600 !important;
+        }
+
+        .legend-indicator {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            display: flex;
+            gap: 0.5rem;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.rewards {
+            background-color: var(--accent-green);
+            border: 1.5px solid var(--accent-green);
+            box-shadow: 0 0 6px var(--accent-green);
+        }
+
+        /* Slide 3: Flow & Functionality Diagram layout */
+        .flow-diagram-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .flow-sequence {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-primary);
+            border: 1px dashed var(--accent-sand);
+            border-radius: 16px;
+            padding: 2.25rem 2rem;
+        }
+
+        .flow-node-step {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .flow-node-step:hover {
+            border-color: var(--step-color);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .flow-step-lbl {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--step-color);
+            margin-bottom: 0.35rem;
+        }
+
+        .flow-step-val {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+
+        .flow-arrow-indicator {
+            font-size: 1.8rem;
+            color: var(--accent-sand);
+            font-weight: bold;
+            padding: 0 1rem;
+        }
+
+        .functionality-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem 3rem;
+            flex-grow: 1;
+            margin-top: 1rem;
+        }
+
+        .func-detail-box {
+            background: var(--accent-green);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0, 90, 43, 0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .func-detail-box:hover {
+            border-color: var(--accent-sand);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 90, 43, 0.15);
+        }
+
+        .func-box-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.45rem;
+            text-transform: uppercase;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+
+        .func-box-desc {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        /* Slide 4 Specific: Reward Rules Layout */
+        .rule-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            height: 100%;
+        }
+
+        .rule-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+            flex-grow: 1;
+        }
+
+        .rule-card.active-rule {
+            border-left: 5px solid var(--accent-green);
+            background: var(--accent-sand-light);
+            border-top: 1px solid var(--bg-secondary);
+            border-right: 1px solid var(--bg-secondary);
+            border-bottom: 1px solid var(--bg-secondary);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .rule-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rule-desc {
+            font-size: 1.0rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .calculation-card {
+            background: var(--accent-sand-medium);
+            border: 1px solid var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.75rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .math-expr {
+            font-family: 'JetBrains Mono', monospace;
+            background: #ffffff;
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            margin: 1.25rem 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .example-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--bg-secondary);
+            padding: 0.85rem 0;
+            font-size: 1.05rem;
+        }
+
+        .example-box:last-child {
+            border: none;
+        }
+
+        .example-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        /* Navigation Controls */
+        footer {
+            padding: 1rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--accent-green);
+            z-index: 10;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            cursor: pointer;
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
+        .slide-indicators {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .indicator.active {
+            background: #ffffff;
+            transform: scale(1.2);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+        }
+
+        .indicator:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .keyboard-hint {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-weight: 500;
+        }
+
+        .key-badge {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border-radius: 4px;
+            padding: 0.05rem 0.3rem;
+            font-family: monospace;
+            font-weight: 700;
+        }
+    </style>
+</head><body>
+
+    <div class="presentation-container">
+
+        <!-- SLIDE 1: Core System & Tech Stack -->
+        <div class="slide active" id="slide-1">
+            <div style="display: flex; flex-grow: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2rem; height: 100%;">
+                <div>
+                    <p style="font-size: 1.25rem; color: var(--accent-green); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 0.5rem 0;">Progressive Project</p>
+                    <h1 style="font-family: 'Outfit', sans-serif; font-size: 4.5rem; font-weight: 800; color: var(--accent-green); margin: 0 0 0.75rem 0;">Money Transfer System</h1>
+                    <p style="font-size: 1.65rem; color: var(--text-muted); font-weight: 600; margin: 0;">Ann Maria Thomas</p>
+                </div>
+                
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;">
+                    <div style="background: var(--bg-primary); border: 1px solid var(--card-border); padding: 1rem 2rem; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 700; color: var(--text-main);">
+                        Angular 18+
+                    </div>
+                    <div style="background: var(--bg-primary); border: 1px solid var(--card-border); padding: 1rem 2rem; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 700; color: var(--text-main);">
+                        Spring Boot 3.x
+                    </div>
+                    <div style="background: var(--bg-primary); border: 1px solid var(--card-border); padding: 1rem 2rem; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 700; color: var(--text-main);">
+                        Spring Security (Basic Auth)
+                    </div>
+                    <div style="background: var(--bg-primary); border: 1px solid var(--card-border); padding: 1rem 2rem; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 700; color: var(--text-main);">
+                        Spring Data JPA
+                    </div>
+                    <div style="background: var(--bg-primary); border: 1px solid var(--card-border); padding: 1rem 2rem; border-radius: 12px; font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 700; color: var(--text-main);">
+                        MySQL Database
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Interactive System Architecture (Mermaid Rendering) -->
+        <div class="slide" id="slide-2">
+            <h2 style="font-family: 'Outfit', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--accent-green); margin-bottom: 1.5rem; text-align: center;">System Architecture Diagrams</h2>
+            <div class="arch-container">
+                <div class="arch-toggle-bar" style="margin-bottom: 0.5rem; align-self: center;">
+                    <button class="arch-btn active" id="btn-old-arch" onclick="changeArchitecture('old')">Old Core System</button>
+                    <button class="arch-btn" id="btn-new-arch" onclick="changeArchitecture('new')">New (Rewards Integrated)</button>
+                </div>
+                <div class="diagram-viewport">
+                    <div id="diagram-container" class="mermaid">
+                        <!-- Mermaid diagram text is dynamically injected here -->
+                    </div>
+                    <div class="legend-indicator" id="rewards-legend" style="display: none;">
+                        <div class="legend-item">
+                            <div class="legend-dot rewards"></div>
+                            <span>New Rewards Module Components</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: User Flow & Functionality -->
+        <div class="slide" id="slide-3">
+            <h2 style="font-family: 'Outfit', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--accent-green); margin-bottom: 1.5rem; text-align: center;">User Journey & Capabilities</h2>
+
+            <div class="flow-diagram-container">
+                <!-- Flow Sequence -->
+                <div class="flow-sequence">
+                    <div class="flow-node-step" style="--step-color: var(--accent-blue);">
+                        <div class="flow-step-lbl">Step 1</div>
+                        <div class="flow-step-val">Sign Up / Register</div>
+                    </div>
+                    <div class="flow-arrow-indicator">➔</div>
+                    <div class="flow-node-step" style="--step-color: var(--accent-purple);">
+                        <div class="flow-step-lbl">Step 2</div>
+                        <div class="flow-step-val">Login (User / Admin)</div>
+                    </div>
+                    <div class="flow-arrow-indicator">➔</div>
+                    <div class="flow-node-step" style="--step-color: var(--accent-green);">
+                        <div class="flow-step-lbl">Step 3</div>
+                        <div class="flow-step-val">Dashboard</div>
+                    </div>
+                    <div class="flow-arrow-indicator">➔</div>
+                    <div class="flow-node-step" style="--step-color: var(--accent-orange);">
+                        <div class="flow-step-lbl">Step 4</div>
+                        <div class="flow-step-val">Ledger Actions</div>
+                    </div>
+                </div>
+
+                <!-- Ledger Action Details -->
+                <div class="functionality-details-grid">
+                    <div class="func-detail-box" style="--func-color: var(--accent-blue);">
+                        <div class="func-box-title">1. Transfer Funds</div>
+                        <div class="func-box-desc">
+                            Send money to other accounts with instant validation and status response.
+                        </div>
+                    </div>
+                    <div class="func-detail-box" style="--func-color: var(--accent-purple);">
+                        <div class="func-box-title">2. Transaction History</div>
+                        <div class="func-box-desc">
+                            Search and filter past transfer records by status, sender, receiver, or date.
+                        </div>
+                    </div>
+                    <div class="func-detail-box" style="--func-color: var(--accent-green);">
+                        <div class="func-box-title">3. Account Profile</div>
+                        <div class="func-box-desc">
+                            View account holder info, real-time balance, and account lock status.
+                        </div>
+                    </div>
+                    <div class="func-detail-box" style="--func-color: var(--accent-orange);">
+                        <div class="func-box-title">4. Rewards Ledger</div>
+                        <div class="func-box-desc">
+                            View loyalty points earned (1 point per $100) and point history.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Reward Module Business Logic -->
+        <div class="slide" id="slide-4">
+            <h2 style="font-family: 'Outfit', sans-serif; font-size: 2.25rem; font-weight: 700; color: var(--accent-green); margin-bottom: 1.5rem; text-align: center;">Reward Module: Eligibility & Rules</h2>
+
+            <div class="grid-2">
+                <div class="slide-pane" style="justify-content: flex-start;">
+                    <div class="rule-grid">
+                        <div class="rule-card active-rule">
+                            <h4 class="rule-title">🟢 Successful Transfer</h4>
+                            <p class="rule-desc">Transaction status must be SUCCESS to qualify for point allocation.</p>
+                        </div>
+                        <div class="rule-card active-rule">
+                            <h4 class="rule-title">🟢 Amount &ge; $100</h4>
+                            <p class="rule-desc">Only transactions of $100 or more are eligible to earn points.</p>
+                        </div>
+                        <div class="rule-card active-rule">
+                            <h4 class="rule-title">🟢 Peer-to-Peer</h4>
+                            <p class="rule-desc">Sender and receiver must be different accounts.</p>
+                        </div>
+                        <div class="rule-card active-rule">
+                            <h4 class="rule-title">🟢 No Self-Transfers</h4>
+                            <p class="rule-desc">Transfers between accounts owned by the same user are disqualified.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-pane">
+                    <div class="calculation-card">
+                        <div>
+                            <h4 class="feature-title" style="color: var(--accent-green);">Calculation Logic</h4>
+                            <p class="feature-desc" style="font-size: 0.75rem;">1 point for every $100 transferred,
+                                rounded down (using integer division). Integrated safely inside database transactions.
+                            </p>
+
+                            <div class="math-expr">
+                                points = floor(Amount / 100)
+                            </div>
+                        </div>
+
+                        <div
+                            style="background: #ffffff; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--bg-secondary);">
+                            <div class="example-box">
+                                <span>Transfer of $250.00</span>
+                                <span class="example-val" style="color: var(--accent-green);">+2 Points</span>
+                            </div>
+                            <div class="example-box">
+                                <span>Transfer of $99.00</span>
+                                <span class="example-val" style="color: var(--text-muted);">0 Points (Amount &lt; 100)</span>
+                            </div>
+                            <div class="example-box">
+                                <span>Transfer of $100 (Self)</span>
+                                <span class="example-val" style="color: var(--accent-red);">0 Points (Disqualified)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Live Demo -->
+        <div class="slide" id="slide-5">
+
+            <div style="display: flex; flex-grow: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%;">
+                <h1 style="font-family: 'Outfit', sans-serif; font-size: 6rem; font-weight: 800; color: var(--accent-green); text-transform: uppercase; letter-spacing: 0.05em; margin: 0;">Demo</h1>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <button class="nav-btn" id="prev-btn" onclick="navigateSlide(-1)" disabled>
+            &larr; Previous
+        </button>
+
+        <div class="slide-indicators">
+            <div class="indicator active" onclick="jumpToSlide(1)"></div>
+            <div class="indicator" onclick="jumpToSlide(2)"></div>
+            <div class="indicator" onclick="jumpToSlide(3)"></div>
+            <div class="indicator" onclick="jumpToSlide(4)"></div>
+            <div class="indicator" onclick="jumpToSlide(5)"></div>
+        </div>
+
+        <div class="keyboard-hint">
+            <span>Use</span>
+            <span class="key-badge">&larr;</span>
+            <span class="key-badge">&rarr;</span>
+            <span>to navigate slides</span>
+        </div>
+
+        <button class="nav-btn" id="next-btn" onclick="navigateSlide(1)">
+            Next &rarr;
+        </button>
+    </footer>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 5;
+
+        // Mermaid Code Definitions (Horizontal LR layout for compact spacing)
+        const oldArchitectureCode = `
+graph LR
+    classDef client fill:#ffffff,stroke:#025FA4,stroke-width:2px,color:#1a1a1a;
+    classDef api fill:#ffffff,stroke:#005A2B,stroke-width:2px,color:#1a1a1a;
+    classDef db fill:#ffffff,stroke:#D32F2F,stroke-width:2px,color:#1a1a1a;
+    classDef config fill:#faf5ff,stroke:#9333ea,stroke-width:2px,color:#581c87;
+
+    subgraph FE [Angular Frontend - AppModule]
+        register[StartPageComponent]
+        dash[DashboardComponent]
+        transfer[TransferComponent]
+        history[HistoryComponent]
+        interceptor[AuthInterceptor]
+    end
+    class register,dash,transfer,history client;
+    class interceptor config;
+
+    subgraph BE [Spring Boot Backend]
+        sec[Spring Security - httpBasic]
+        uCtrl[UserController]
+        aCtrl[AccountController]
+        tCtrl[TransferController]
+    end
+    class sec,uCtrl,aCtrl,tCtrl api;
+
+    subgraph DB [MySQL Database]
+        uTbl[(users table)]
+        aTbl[(accounts table)]
+        lTbl[(transaction_logs)]
+    end
+    class uTbl,aTbl,lTbl db;
+
+    register --> dash
+    dash --> transfer & history
+    transfer & history --> interceptor
+    
+    register -- "Public Route" --> sec
+    interceptor -- "Basic Auth Header" --> sec
+    sec --> uCtrl & aCtrl & tCtrl
+    uCtrl --> uTbl
+    aCtrl --> aTbl
+    tCtrl --> aTbl & lTbl
+        `;
+
+        const newArchitectureCode = `
+graph LR
+    classDef client fill:#ffffff,stroke:#025FA4,stroke-width:2px,color:#1a1a1a;
+    classDef api fill:#ffffff,stroke:#005A2B,stroke-width:2px,color:#1a1a1a;
+    classDef db fill:#ffffff,stroke:#D32F2F,stroke-width:2px,color:#1a1a1a;
+    classDef rewards fill:#E8F5E9,stroke:#005A2B,stroke-width:3px,color:#005A2B;
+    classDef config fill:#faf5ff,stroke:#9333ea,stroke-width:2px,color:#581c87;
+
+    subgraph FE [Angular Frontend - AppModule]
+        register[StartPageComponent]
+        dash[DashboardComponent]
+        transfer[TransferComponent]
+        history[HistoryComponent]
+        rewardsComp[RewardComponent]
+        interceptor[AuthInterceptor]
+    end
+    class register,dash,transfer,history client;
+    class interceptor config;
+    class rewardsComp rewards;
+
+    subgraph BE [Spring Boot Backend]
+        sec[Spring Security - httpBasic]
+        uCtrl[UserController]
+        aCtrl[AccountController]
+        tCtrl[TransferController]
+        rewardService[RewardService]
+    end
+    class sec,uCtrl,aCtrl,tCtrl api;
+    class rewardService rewards;
+
+    subgraph DB [MySQL Database]
+        uTbl[(users table)]
+        aTbl[(accounts table)]
+        lTbl[(transaction_logs)]
+        rTbl[(reward_ledger)]
+    end
+    class uTbl,aTbl,lTbl db;
+    class rTbl rewards;
+
+    register --> dash
+    dash --> transfer & history & rewardsComp
+    transfer & history & rewardsComp --> interceptor
+    
+    register -- "Public Route" --> sec
+    interceptor -- "Basic Auth Header" --> sec
+    sec --> uCtrl & aCtrl & tCtrl
+    aCtrl -- "rewards endpoint" --> rewardService
+    tCtrl -- "triggers rewards" --> rewardService
+    uCtrl --> uTbl
+    aCtrl --> aTbl
+    tCtrl --> aTbl & lTbl
+    rewardService --> rTbl
+        `;
+
+        let currentArch = 'old';
+
+        async function drawDiagram(code) {
+            const container = document.getElementById('diagram-container');
+            container.removeAttribute('data-processed');
+            container.innerHTML = code;
+            try {
+                await mermaid.run({
+                    nodes: [container]
+                });
+            } catch (err) {
+                console.error("Mermaid Render Error: ", err);
+            }
+        }
+
+        function changeArchitecture(type) {
+            if (currentArch === type) return;
+            currentArch = type;
+
+            const btnOld = document.getElementById('btn-old-arch');
+            const btnNew = document.getElementById('btn-new-arch');
+            const rewardsLegend = document.getElementById('rewards-legend');
+
+            if (type === 'old') {
+                btnOld.classList.add('active');
+                btnNew.classList.remove('active');
+                rewardsLegend.style.display = 'none';
+                drawDiagram(oldArchitectureCode);
+            } else {
+                btnNew.classList.add('active');
+                btnOld.classList.remove('active');
+                rewardsLegend.style.display = 'flex';
+                drawDiagram(newArchitectureCode);
+            }
+        }
+
+        function updateSlideUI() {
+            // Update slides visibility
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                if (i === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            }
+
+            // Update indicators
+            const indicators = document.querySelectorAll('.indicator');
+            indicators.forEach((ind, index) => {
+                if (index + 1 === currentSlide) {
+                    ind.classList.add('active');
+                } else {
+                    ind.classList.remove('active');
+                }
+            });
+
+            // Update navigation button states
+            document.getElementById('prev-btn').disabled = (currentSlide === 1);
+            document.getElementById('next-btn').disabled = (currentSlide === totalSlides);
+
+            // Re-render Mermaid if slide 2 becomes active
+            if (currentSlide === 2) {
+                setTimeout(() => {
+                    drawDiagram(currentArch === 'old' ? oldArchitectureCode : newArchitectureCode);
+                }, 50);
+            }
+        }
+
+        function navigateSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 1) currentSlide = 1;
+            if (currentSlide > totalSlides) currentSlide = totalSlides;
+            updateSlideUI();
+        }
+
+        function jumpToSlide(num) {
+            currentSlide = num;
+            updateSlideUI();
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                if (currentSlide < totalSlides) {
+                    navigateSlide(1);
+                }
+            } else if (e.key === 'ArrowLeft') {
+                if (currentSlide > 1) {
+                    navigateSlide(-1);
+                }
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateSlideUI();
+        });
+    </script>
+
+</body>
+
+</html>
