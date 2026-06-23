@@ -9,8 +9,12 @@ import com.fidelity.mts.domain.exception.InsufficientBalanceException;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 
+@Setter
+@Getter
 @Entity
 @Table(name = "accounts")
 public class Account {
@@ -38,8 +42,7 @@ public class Account {
 	@Column(name = "last_updated")
 	private LocalDateTime lastUpdated;
 
-	// BCrypt-hashed login password for this account. Nullable so existing rows
-	// upgrade cleanly via ddl-auto=update; a startup seeder backfills any nulls.
+    @NotNull
 	@Column(name = "password_hash", length = 100)
 	private String passwordHash;
 
@@ -83,49 +86,6 @@ public class Account {
 		this.lastUpdated = LocalDateTime.now();
 				
 	}
-	
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	public String getHolderName() {
-		return holderName;
-	}
-	public void setHolderName(String holderName) {
-		this.holderName = holderName;
-	}
-	public BigDecimal getBalance() {
-		return balance;
-	}
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
-	}
-	public AccountStatus getStatus() {
-		return status;
-	}
-	public void setStatus(AccountStatus status) {
-		this.status = status;
-	}
-	public int getVersion() {
-		return version;
-	}
-	public void setVersion(int version) {
-		this.version = version;
-	}
-	public LocalDateTime getLastUpdated() {
-		return lastUpdated;
-	}
-	public void setLastUpdated(LocalDateTime lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
-	public String getPasswordHash() {
-		return passwordHash;
-	}
-	public void setPasswordHash(String passwordHash) {
-		this.passwordHash = passwordHash;
-	}
 
-	
+
 }

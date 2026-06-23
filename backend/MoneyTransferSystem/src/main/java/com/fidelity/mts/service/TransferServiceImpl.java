@@ -18,6 +18,7 @@ import com.fidelity.mts.repo.AccountRepository;
 import com.fidelity.mts.repo.TransactionLogRepository;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -47,7 +48,7 @@ public class TransferServiceImpl implements TransferService {
 
 
     private void validateTransfer(TransferRequest request) {
-        if (request.fromAccountId() == request.toAccountId()) {
+        if (Objects.equals(request.fromAccountId(), request.toAccountId())) {
             throw new InvalidTransferException();
         }
 
@@ -66,9 +67,9 @@ public class TransferServiceImpl implements TransferService {
 
 
     private TransactionLog executeTransfer(TransferRequest request) {
-        TransactionLog transactionLog = null;
+        TransactionLog transactionLog;
         
-        if (request.fromAccountId() == request.toAccountId()) {
+        if (Objects.equals(request.fromAccountId(), request.toAccountId())) {
         	throw new InvalidTransferException();
         }
         

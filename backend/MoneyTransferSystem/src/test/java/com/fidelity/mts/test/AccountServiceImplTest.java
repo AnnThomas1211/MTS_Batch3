@@ -55,8 +55,6 @@ class AccountServiceImplTest {
 		return account;
 	}
 
-	// ---------- login ----------
-
 	@Test
 	void login_withCorrectPassword_returnsAccount() {
 		Account account = activeAccountWithHash();
@@ -97,8 +95,6 @@ class AccountServiceImplTest {
 		// Must not even attempt to match against a null hash.
 		verify(passwordEncoder, never()).matches(anyString(), any());
 	}
-
-	// ---------- register ----------
 
 	@Test
 	void register_persistsHashedPasswordAndDefaults() {

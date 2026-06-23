@@ -7,16 +7,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import com.fidelity.mts.domain.model.Account;
 import com.fidelity.mts.repo.AccountRepository;
 
-/**
- * Authenticates HTTP Basic requests per account instead of against a single
- * global user. The "username" is the account id and the stored credential is
- * the account's BCrypt password hash. Spring's DaoAuthenticationProvider then
- * matches the raw password using the configured PasswordEncoder.
- */
 @Service
 public class AccountUserDetailsService implements UserDetailsService {
 

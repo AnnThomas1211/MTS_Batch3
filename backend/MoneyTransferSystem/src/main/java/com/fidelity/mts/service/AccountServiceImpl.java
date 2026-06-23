@@ -3,12 +3,10 @@ package com.fidelity.mts.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
 import com.fidelity.mts.application.dto.AccountResponse;
 import com.fidelity.mts.domain.enums.Enums.AccountStatus;
 import com.fidelity.mts.domain.exception.AccountNotFoundException;
@@ -31,7 +29,8 @@ public class AccountServiceImpl implements AccountService {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
-	
+    private static final BigDecimal STARTING_BALANCE = BigDecimal.valueOf(1000);
+
 	@Override
     public AccountResponse getAccount(long id) {
         Account account = accountRepository.findById(id)
@@ -51,8 +50,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public List<TransactionLog> getTransactions(long id) {
-		List<TransactionLog> log = transactionLogRepository.findByFromAccountIdOrToAccountIdOrderByCreatedOnDesc(id, id);
-		return log;
+        return transactionLogRepository.findByFromAccountIdOrToAccountIdOrderByCreatedOnDesc(id, id);
 	}
 
 	@Override
@@ -60,7 +58,6 @@ public class AccountServiceImpl implements AccountService {
 		Account account = accountRepository.findById(accountId)
 			.orElseThrow(() -> new AccountNotFoundException(accountId));
 
-		// An account with no hash set can never authenticate; treat as bad credentials.
 		if (!StringUtils.hasText(account.getPasswordHash())
 				|| !passwordEncoder.matches(rawPassword, account.getPasswordHash())) {
 			throw new InvalidCredentialsException();
@@ -69,8 +66,6 @@ public class AccountServiceImpl implements AccountService {
 		return AccountResponse.fromAccount(account);
 	}
 
-	// New accounts are credited with this welcome balance on registration.
-	private static final BigDecimal STARTING_BALANCE = BigDecimal.valueOf(1000);
 
 	@Override
 	public AccountResponse register(String holderName, String rawPassword) {

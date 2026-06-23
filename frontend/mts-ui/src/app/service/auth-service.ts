@@ -30,12 +30,7 @@ export class AuthService {
     this.isLoggedIn$ = this.loggedIn.asObservable();
   }
 
-  /**
-   * Validates the credentials against the backend. The session is only
-   * established (token + account stored, logged-in state emitted) if the
-   * backend confirms the account id + password. Callers should navigate only
-   * after this observable emits successfully.
-   */
+
   login(accountId: number, password: string): Observable<Account> {
     return this.http
       .post<Account>(`${this.URL}/login`, { accountId, password })
@@ -44,18 +39,12 @@ export class AuthService {
       );
   }
 
-  /**
-   * Registers a new account from a holder name + password. The backend assigns
-   * the account id, which is returned in the response so the user knows the id
-   * they will sign in with. No session is established here.
-   */
+
   register(holderName: string, password: string): Observable<Account> {
     return this.http.post<Account>(`${this.URL}/register`, { holderName, password });
   }
 
   private establishSession(account: Account, accountId: number, password: string): void {
-    // HTTP Basic credentials for subsequent requests are accountId:password,
-    // matched against the per-account BCrypt hash on the backend.
     const token = btoa(`${accountId}:${password}`);
     if (this.isBrowser) {
       localStorage.setItem(this.TOKEN_KEY, token);

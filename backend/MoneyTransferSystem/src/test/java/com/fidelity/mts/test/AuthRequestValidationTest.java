@@ -25,8 +25,6 @@ class AuthRequestValidationTest {
 		validator = factory.getValidator();
 	}
 
-	// ---------- LoginRequest ----------
-
 	@Test
 	void login_valid_hasNoViolations() {
 		Set<ConstraintViolation<LoginRequest>> v = validator.validate(new LoginRequest(1L, "1234"));
@@ -50,8 +48,6 @@ class AuthRequestValidationTest {
 		Set<ConstraintViolation<LoginRequest>> v = validator.validate(new LoginRequest(1L, "  "));
 		assertFalse(v.isEmpty());
 	}
-
-	// ---------- RegisterRequest ----------
 
 	@Test
 	void register_valid_hasNoViolations() {
